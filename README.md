@@ -9,15 +9,38 @@ Web port of [Wee Tarot](https://mama666.itch.io/wee-tarot). This repo is separat
 | Path | Purpose |
 |------|---------|
 | `assets/` | Images, audio, fonts (copied from Playdate) |
-| `content/` | Card copy, spread text, diary seed data (Lua tables — convert to JSON/TS when you pick a stack) |
-| `reference/playdate/` | Read-only Playdate Lua for architecture, spread configs, deck logic |
-| `docs/` | Porting notes, flow maps, performance notes from Playdate |
+| `content/` | Card copy, spread text (Lua source for export) |
+| `src/` | Phaser 3 + TypeScript web game |
+| `reference/playdate/` | Read-only Playdate Lua for architecture reference |
+| `docs/` | Porting notes, flow maps |
 
-See [MIGRATION.md](MIGRATION.md) for the full list of what was copied and from where.
+See [MIGRATION.md](MIGRATION.md) for the full copy manifest.
 
-## Next steps
+## Development
 
-1. Choose web stack (see `docs/porting.md`)
-2. Export `content/data/*.lua` to JSON or TypeScript modules
-3. Build a vertical slice: title → one spread → reading
-4. Open this folder in its own Cursor window
+Requires **Node.js 20+**.
+
+```bash
+npm install
+npm run export:data    # or: npm run export:data:ps on Windows without Node for export only
+npm run dev
+```
+
+Open the URL shown in the terminal (default `http://localhost:5173`).
+
+## Vertical slice
+
+Title → one-card shuffle (spin or auto) → draw → Dinah reading → back to title.
+
+## Build
+
+```bash
+npm run build
+npm run preview
+```
+
+## Tests
+
+```bash
+npm test
+```
