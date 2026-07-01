@@ -4,26 +4,30 @@ import { BootScene } from "./scenes/BootScene";
 import { OneCardGameScene } from "./scenes/OneCardGameScene";
 import { OneCardPostScene } from "./scenes/OneCardPostScene";
 import { TitleScene } from "./scenes/TitleScene";
+import { bindIntegerScale } from "./scale";
 
 export function createGame(parent: string | HTMLElement): Phaser.Game {
-  return new Phaser.Game({
+  const game = new Phaser.Game({
     type: Phaser.AUTO,
     parent,
     width: GAME_WIDTH,
     height: GAME_HEIGHT,
-    backgroundColor: "#ffffff",
+    backgroundColor: "#1a1a1a",
     pixelArt: true,
     antialias: false,
-    roundPixels: true,
+    roundPixels: false,
     scale: {
-      mode: Phaser.Scale.FIT,
+      mode: Phaser.Scale.NONE,
       autoCenter: Phaser.Scale.CENTER_BOTH,
       width: GAME_WIDTH,
       height: GAME_HEIGHT,
     },
-    scene: [BootScene, TitleScene, OneCardGameScene, OneCardPostScene],
+    scene: [BootScene, OneCardGameScene, TitleScene, OneCardPostScene],
     audio: {
       disableWebAudio: false,
     },
   });
+
+  bindIntegerScale(game);
+  return game;
 }

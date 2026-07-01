@@ -2,9 +2,8 @@ import Phaser from "phaser";
 import { getCardImageUrl } from "../config";
 import { buildLines } from "../data/oneCardReadingText";
 import type { ReadingResult } from "../data/types";
-import { fadeInIfNeeded, switchScene } from "../systems/SceneTransitions";
 import type { SoundManager } from "../systems/SoundManager";
-import { confirmPressed, createWrappedText } from "../systems/phaserUtils";
+import { confirmPressed, createWrappedText, initSceneCamera, type UiText } from "../systems/phaserUtils";
 
 interface OneCardPostData {
   reading: ReadingResult;
@@ -14,7 +13,7 @@ export class OneCardPostScene extends Phaser.Scene {
   private reading?: ReadingResult;
   private lines: string[] = [];
   private lineIndex = 0;
-  private textBox?: Phaser.GameObjects.Text;
+  private textBox?: UiText;
   private scrollSprite?: Phaser.GameObjects.Image;
   private canAdvance = false;
   private cardSprite?: Phaser.GameObjects.Image;
@@ -28,10 +27,10 @@ export class OneCardPostScene extends Phaser.Scene {
   }
 
   create(): void {
-    fadeInIfNeeded(this);
+    initSceneCamera(this);
 
     if (!this.reading) {
-      switchScene(this, "TitleScene");
+      this.scene.start("TitleScene");
       return;
     }
 
@@ -85,7 +84,7 @@ export class OneCardPostScene extends Phaser.Scene {
     }
   }
 
-  private sound(): SoundManager {
+  private soundManager(): SoundManager {
     return this.registry.get("sound") as SoundManager;
   }
 
@@ -93,8 +92,8 @@ export class OneCardPostScene extends Phaser.Scene {
     this.textBox?.destroy();
     const line = this.lines[this.lineIndex] ?? "";
     this.textBox = createWrappedText(this, 190, 182, line.replace(/\*/g, ""), 310, {
-      fontSize: "13px",
-    }).setDepth(3);
+      fontSize: 13,
+    });
 
     this.tweens.add({
       targets: this.textBox,
@@ -111,8 +110,8 @@ export class OneCardPostScene extends Phaser.Scene {
   }
 
   private finishReading(): void {
-    this.sound().playSfx("sfx-a-but", { volume: 0.5 });
-    switchScene(this, "TitleScene");
+    this.soundManager().playSfx("sfx-a-but", { volume: 0.5 });
+    this.scene.start("TitleScene");
   }
 
   update(): void {

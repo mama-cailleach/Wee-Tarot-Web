@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { addGameText, UI_DEPTH, type UiText } from "./phaserUtils";
 
 export interface ShuffleInputConfig {
   centerX: number;
@@ -15,9 +16,8 @@ export class ShuffleInput {
   private readonly spinThreshold = 0.35;
 
   private spinZone: Phaser.GameObjects.Zone;
-  private autoButton: Phaser.GameObjects.Container;
   private autoButtonBg: Phaser.GameObjects.Rectangle;
-  private autoLabel: Phaser.GameObjects.Text;
+  private autoLabel: UiText;
 
   constructor(
     private readonly scene: Phaser.Scene,
@@ -28,21 +28,17 @@ export class ShuffleInput {
       .setInteractive({ useHandCursor: true });
 
     this.autoButtonBg = scene.add
-      .rectangle(0, 0, 88, 22, 0xffffff, 1)
-      .setStrokeStyle(1, 0x000000);
-    this.autoLabel = scene.add
-      .text(0, 0, "Auto shuffle", {
-        fontFamily: "monospace",
-        fontSize: "10px",
-        color: "#000000",
-      })
-      .setOrigin(0.5);
-
-    this.autoButton = scene.add
-      .container(340, 220, [this.autoButtonBg, this.autoLabel])
-      .setDepth(500)
-      .setSize(88, 22)
+      .rectangle(340, 220, 88, 22, 0xffffff, 1)
+      .setStrokeStyle(1, 0x000000)
+      .setDepth(UI_DEPTH)
       .setInteractive({ useHandCursor: true });
+
+    this.autoLabel = addGameText(scene, 340, 220, "Auto shuffle", {
+      fontSize: 10,
+      align: "center",
+    })
+      .setOrigin(0.5)
+      .setDepth(UI_DEPTH + 1);
 
     this.bindEvents();
   }
@@ -93,7 +89,7 @@ export class ShuffleInput {
     this.scene.input.on("pointerup", endDrag);
     this.scene.input.on("pointerupoutside", endDrag);
 
-    this.autoButton.on("pointerdown", () => {
+    this.autoButtonBg.on("pointerdown", () => {
       this.config.onAutoShuffle();
     });
   }
@@ -104,12 +100,14 @@ export class ShuffleInput {
 
   setDepth(depth: number): void {
     this.spinZone.setDepth(depth);
-    this.autoButton.setDepth(depth);
+    this.autoButtonBg.setDepth(depth);
+    this.autoLabel.setDepth(depth + 1);
   }
 
   setVisible(visible: boolean): void {
     this.spinZone.setVisible(visible);
-    this.autoButton.setVisible(visible);
+    this.autoButtonBg.setVisible(visible);
+    this.autoLabel.setVisible(visible);
     this.spinZone.disableInteractive();
     if (visible) {
       this.spinZone.setInteractive({ useHandCursor: true });
@@ -118,7 +116,8 @@ export class ShuffleInput {
 
   destroy(): void {
     this.spinZone.destroy();
-    this.autoButton.destroy();
+    this.autoButtonBg.destroy();
+    this.autoLabel.destroy();
   }
 }
 

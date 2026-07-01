@@ -1,11 +1,10 @@
 import Phaser from "phaser";
-import { getCardImageUrl } from "../config";
+import { GAME_HEIGHT, GAME_WIDTH, getCardImageUrl } from "../config";
 import type { ReadingResult } from "../data/types";
 import { AutoShuffleDriver, ShuffleInput } from "../systems/ShuffleInput";
 import { Deck } from "../systems/Deck";
-import { fadeInIfNeeded, switchScene } from "../systems/SceneTransitions";
-import type { SoundManager } from "../systems/SoundManager";
-import { confirmPressed, createWrappedText, playSpritesheetOnce } from "../systems/phaserUtils";
+import { SoundManager } from "../systems/SoundManager";
+import { addGameText, confirmPressed, createWrappedText, initSceneCamera, playSpritesheetOnce, type UiText } from "../systems/phaserUtils";
 
 type GameState = "intro" | "shuffle" | "revealing" | "fortune" | "revealed";
 
@@ -23,7 +22,7 @@ export class OneCardGameScene extends Phaser.Scene {
   private spinSlideSprite?: Phaser.GameObjects.Sprite;
   private placementSprite?: Phaser.GameObjects.Image;
   private cardSprite?: Phaser.GameObjects.Image;
-  private promptText?: Phaser.GameObjects.Text;
+  private promptText?: UiText;
   private shuffleInput?: ShuffleInput;
   private autoDriver?: AutoShuffleDriver;
 
@@ -41,7 +40,31 @@ export class OneCardGameScene extends Phaser.Scene {
   }
 
   create(): void {
-    fadeInIfNeeded(this);
+    initSceneCamera(this);
+
+    if (!this.registry.get("sound")) {
+      this.registry.set("sound", new SoundManager(this));
+    }
+
+    console.log(
+      "[OneCardGameScene] create — scene:",
+      this.scene.key,
+      "playspace:",
+      this.textures.exists("playspace"),
+    );
+
+    this.cameras.main.setBackgroundColor("#d4edda");
+    this.cameras.main.setVisible(true);
+
+    this.add
+      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0xd4edda)
+      .setDepth(0);
+
+    addGameText(this, 200, 120, "ONE CARD GAME", {
+      fontSize: 20,
+      align: "center",
+    }).setOrigin(0.5);
+
     this.state = "intro";
     this.shuffleFrame = 1;
     this.shuffleSpinCount = 0;
@@ -52,13 +75,13 @@ export class OneCardGameScene extends Phaser.Scene {
     this.startDeckLayingIntro();
   }
 
-  private sound(): SoundManager {
+  private soundManager(): SoundManager {
     return this.registry.get("sound") as SoundManager;
   }
 
   private startDeckLayingIntro(): void {
     const sprite = this.add.sprite(205, 120, "deck-laying", 0).setDepth(2);
-    this.sound().playSfx("sfx-cards-slow", { volume: 1 });
+    this.soundManager().playSfx("sfx-cards-slow", { volume: 1 });
 
     playSpritesheetOnce(sprite, "deck-laying-play", 30, () => {
       sprite.destroy();
@@ -94,15 +117,11 @@ export class OneCardGameScene extends Phaser.Scene {
 
   private showPrompt(text: string): void {
     this.promptText?.destroy();
-    this.promptText = this.add
-      .text(20, 20, text, {
-        fontFamily: "Georgia, serif",
-        fontSize: "12px",
-        color: "#000000",
-        align: "left",
-        wordWrap: { width: 360 },
-      })
-      .setOrigin(0, 0);
+    this.promptText = addGameText(this, 20, 20, text, {
+      fontSize: 12,
+      align: "left",
+      wordWrap: { width: 360 },
+    }).setOrigin(0, 0);
   }
 
   private clearPrompt(): void {
@@ -114,7 +133,7 @@ export class OneCardGameScene extends Phaser.Scene {
     if (this.state !== "shuffle" || this.spinSlideTriggered) {
       return;
     }
-    this.sound().startCrankLoop();
+    this.soundManager().startCrankLoop();
     this.autoDriver?.start();
   }
 
@@ -129,7 +148,7 @@ export class OneCardGameScene extends Phaser.Scene {
     }
 
     const direction = frameAdvance > 0 ? 1 : -1;
-    this.sound().startCrankLoop();
+    this.soundManager().startCrankLoop();
 
     for (let i = 0; i < steps; i += 1) {
       let nextFrame = this.shuffleFrame + direction;
@@ -163,7 +182,7 @@ export class OneCardGameScene extends Phaser.Scene {
     this.spinSlideTriggered = true;
     this.state = "revealing";
     this.autoDriver?.stop();
-    this.sound().stopCrankLoop();
+    this.soundManager().stopCrankLoop();
     this.clearPrompt();
     this.shuffleInput?.setVisible(false);
 
@@ -171,7 +190,7 @@ export class OneCardGameScene extends Phaser.Scene {
     this.shuffleSprite = undefined;
 
     this.spinSlideSprite = this.add.sprite(205, 150, "spin-slide", 0).setDepth(3);
-    this.sound().playSfx("sfx-cards-fast", { volume: 1 });
+    this.soundManager().playSfx("sfx-cards-fast", { volume: 1 });
 
     playSpritesheetOnce(this.spinSlideSprite, "spin-slide-play", 30, () => {
       this.spinSlideSprite?.destroy();
@@ -235,7 +254,7 @@ export class OneCardGameScene extends Phaser.Scene {
     }
 
     this.state = "fortune";
-    this.sound().playSfx("sfx-tuin", { volume: 0.5 });
+    this.soundManager().playSfx("sfx-tuin", { volume: 0.5 });
 
     this.time.delayedCall(500, () => {
       this.state = "revealed";
@@ -245,7 +264,7 @@ export class OneCardGameScene extends Phaser.Scene {
 
   private showRevealPrompt(): void {
     createWrappedText(this, 200, 210, "Tap to read your fortune", 360, {
-      fontSize: "12px",
+      fontSize: 12,
     }).setDepth(10);
   }
 
@@ -255,14 +274,14 @@ export class OneCardGameScene extends Phaser.Scene {
     }
 
     if (confirmPressed(this) && this.drawResult) {
-      this.sound().playSfx("sfx-a-but", { volume: 0.5 });
-      switchScene(this, "OneCardPostScene", { reading: this.drawResult });
+      this.soundManager().playSfx("sfx-a-but", { volume: 0.5 });
+      this.scene.start("OneCardPostScene", { reading: this.drawResult });
     }
   }
 
   shutdown(): void {
     this.autoDriver?.stop();
     this.shuffleInput?.destroy();
-    this.sound().stopCrankLoop();
+    this.soundManager().stopCrankLoop();
   }
 }

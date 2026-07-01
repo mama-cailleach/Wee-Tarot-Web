@@ -21,6 +21,8 @@ $assets = @(
     "assets\images\shuffleAnimation\deck_laying_full_lower-table-400-240.png",
     "assets\images\shuffleAnimation\explode_finale-table-400-240.png",
     "assets\images\shuffleAnimation\reveal-table-236-342.png",
+    "assets\fonts\tarotheque-v2-20-atlas.png",
+    "assets\fonts\tarotheque-v2-20.xml",
     "assets\sound\cards2_slow.wav",
     "assets\sound\a_but1.wav"
 )
