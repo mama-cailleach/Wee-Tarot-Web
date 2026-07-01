@@ -1,0 +1,66 @@
+{
+
+  "schemaVersion": 1,
+
+  "entries": [
+
+    {
+
+      "date": "20-04-2026",
+
+      "time": "04.20",
+
+      "spreadType": "three_card",
+
+      "cards": [
+
+        {
+
+          "name": "The Fool",
+
+          "number": 1,
+
+          "suit": 5,
+
+          "inverted": false,
+
+          "position": 1
+
+        },
+
+        {
+
+          "name": "The Emperor",
+
+          "number": 5,
+
+          "suit": 5,
+
+          "inverted": true,
+
+          "position": 2
+
+        },
+
+        {
+
+          "name": "Judgement",
+
+          "number": 21,
+
+          "suit": 5,
+
+          "inverted": false,
+
+          "position": 3
+
+        }
+
+      ]
+
+    }
+
+  ]
+
+}
+

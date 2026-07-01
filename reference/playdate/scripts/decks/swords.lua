@@ -1,0 +1,16 @@
+swordsDeck = {
+    "Ace of Swords" ,
+    "Two of Swords" ,
+    "Three of Swords" ,
+    "Four of Swords" ,
+    "Five of Swords" ,
+    "Six of Swords" ,
+    "Seven of Swords" ,
+    "Eight of Swords" ,
+    "Nine of Swords" ,
+    "Ten of Swords" ,
+    "Page of Swords" ,
+    "Knight of Swords" ,
+    "Queen of Swords" ,
+    "King of Swords" ,
+}

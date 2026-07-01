@@ -1,0 +1,5 @@
+import "scripts/decks/majorArcana"
+import "scripts/decks/pentacles"
+import "scripts/decks/cups"
+import "scripts/decks/swords"
+import "scripts/decks/wands"

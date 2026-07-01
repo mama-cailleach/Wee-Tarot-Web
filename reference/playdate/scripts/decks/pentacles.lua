@@ -1,0 +1,16 @@
+pentaclesDeck = {
+    "Ace of Pentacles" ,
+    "Two of Pentacles" ,
+    "Three of Pentacles" ,
+    "Four of Pentacles" ,
+    "Five of Pentacles" ,
+    "Six of Pentacles" ,
+    "Seven of Pentacles" ,
+    "Eight of Pentacles" ,
+    "Nine of Pentacles" ,
+    "Ten of Pentacles" ,
+    "Page of Pentacles" ,
+    "Knight of Pentacles" ,
+    "Queen of Pentacles" ,
+    "King of Pentacles" ,
+}
