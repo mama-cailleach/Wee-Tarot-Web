@@ -69,20 +69,21 @@ function parseTableSize(filename: string): { cellWidth: number; cellHeight: numb
   };
 }
 
-/** Playdate exports black glyphs on white; Phaser bitmap fonts need white glyphs on transparent. */
+/**
+ * The Playdate atlas already stores the glyph silhouette in the alpha channel
+ * (glyph = alpha 255, background = alpha 0). Phaser tints by multiplying against
+ * the glyph pixels, so we force every pixel to white and keep the original alpha.
+ * This makes the glyph shape tintable and leaves the background transparent.
+ */
 function convertPlaydateAtlas(inputPath: string, outputPath: string): { width: number; height: number } {
   const png = PNG.sync.read(readFileSync(inputPath));
 
   for (let i = 0; i < png.data.length; i += 4) {
-    const value = png.data[i];
-    if (value < 128) {
-      png.data[i] = 255;
-      png.data[i + 1] = 255;
-      png.data[i + 2] = 255;
-      png.data[i + 3] = 255;
-    } else {
-      png.data[i + 3] = 0;
-    }
+    const alpha = png.data[i + 3];
+    png.data[i] = 255;
+    png.data[i + 1] = 255;
+    png.data[i + 2] = 255;
+    png.data[i + 3] = alpha;
   }
 
   writeFileSync(outputPath, PNG.sync.write(png));

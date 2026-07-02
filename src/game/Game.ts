@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import { GAME_HEIGHT, GAME_WIDTH } from "./config";
 import { BootScene } from "./scenes/BootScene";
+import { MenuScene } from "./scenes/MenuScene";
 import { OneCardGameScene } from "./scenes/OneCardGameScene";
 import { OneCardPostScene } from "./scenes/OneCardPostScene";
 import { TitleScene } from "./scenes/TitleScene";
@@ -18,11 +19,14 @@ export function createGame(parent: string | HTMLElement): Phaser.Game {
     roundPixels: false,
     scale: {
       mode: Phaser.Scale.NONE,
-      autoCenter: Phaser.Scale.CENTER_BOTH,
+      // Centering is handled by the #game flexbox in index.html. Letting Phaser
+      // also autoCenter injects canvas margins that fight the flexbox and push
+      // the canvas off to one side.
+      autoCenter: Phaser.Scale.NO_CENTER,
       width: GAME_WIDTH,
       height: GAME_HEIGHT,
     },
-    scene: [BootScene, OneCardGameScene, TitleScene, OneCardPostScene],
+    scene: [BootScene, OneCardGameScene, TitleScene, MenuScene, OneCardPostScene],
     audio: {
       disableWebAudio: false,
     },

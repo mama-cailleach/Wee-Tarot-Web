@@ -593,7 +593,7 @@ export const CARD_DATA: CardDataMap = {
     ],
     "upright_fortune": [
       "Everything blooms. Even your doubt looks confused.",
-      "Truth tans well.\\\\nYou, less so.",
+      "Truth tans well.\nYou, less so.",
       "The light hits. You pretend you weren't in the dark."
     ],
     "reversed_fortune": [
@@ -631,7 +631,7 @@ export const CARD_DATA: CardDataMap = {
       "The chance to rise slips away when you close your ears to your own soul."
     ],
     "correspondence": [
-      "Air rises with the call.\\\\nPluto echoes the final note beyond Scorpio's veil."
+      "Air rises with the call.\nPluto echoes the final note beyond Scorpio's veil."
     ]
   },
   "The World": {
@@ -761,7 +761,7 @@ export const CARD_DATA: CardDataMap = {
       "A ship lost at sea. Or maybe you just forgot where you parked it."
     ],
     "correspondence": [
-      "Sun in Aries.\\\\nA flame sent forth still longs to return.",
+      "Sun in Aries.\nA flame sent forth still longs to return.",
       "The horizon remembers its source."
     ]
   },
@@ -796,7 +796,7 @@ export const CARD_DATA: CardDataMap = {
       "You almost relaxed, but the universe noticed and immediately sent a test."
     ],
     "correspondence": [
-      "Venus in Aries.\\\\nA hearth is lit, and voices gather.",
+      "Venus in Aries.\nA hearth is lit, and voices gather.",
       "Joy, fleeting, but real as smoke in the wind."
     ]
   },
@@ -997,7 +997,7 @@ export const CARD_DATA: CardDataMap = {
       "You finally dropped the load. Was any of it even yours?"
     ],
     "correspondence": [
-      "Saturn in Sagittarius.\\\\nEven fire may falter when burdened.",
+      "Saturn in Sagittarius.\nEven fire may falter when burdened.",
       "Release what smothers the spark."
     ]
   },
@@ -1029,7 +1029,7 @@ export const CARD_DATA: CardDataMap = {
       "You had a plan... it wandered off chasing butterflies."
     ],
     "correspondence": [
-      "Earth of Fire.\\\\nThe spark grins, curious and wild.",
+      "Earth of Fire.\nThe spark grins, curious and wild.",
       "Unaware it might soon become a wildfire."
     ]
   },
@@ -1129,7 +1129,7 @@ export const CARD_DATA: CardDataMap = {
       "King of nothing but embers. Even the ash is packing. Cue the violin."
     ],
     "correspondence": [
-      "Air of Fire.\\\\nThe flame speaks in strategy now.",
+      "Air of Fire.\nThe flame speaks in strategy now.",
       "Not every fire is loud, some rule in silence."
     ]
   },
@@ -1451,7 +1451,7 @@ export const CARD_DATA: CardDataMap = {
       "Clashing auras, crystal shoe. Trip and stumble until you find your sole-mate."
     ],
     "correspondence": [
-      "Mars in Pisces.\\\\nThe storm has passed.\\\\nThe rainbow arches.",
+      "Mars in Pisces.\nThe storm has passed.\nThe rainbow arches.",
       "Harmony, for a heartbeat or a lifetime."
     ]
   },
@@ -1706,7 +1706,7 @@ export const CARD_DATA: CardDataMap = {
       "The stillness broke. So did your last nerve."
     ],
     "correspondence": [
-      "Jupiter in Libra.\\\\nSwords laid to rest.\\\\nThe mind exhales.",
+      "Jupiter in Libra.\nSwords laid to rest.\nThe mind exhales.",
       "Let the hush mend what battle could not."
     ]
   },
@@ -1738,7 +1738,7 @@ export const CARD_DATA: CardDataMap = {
       "You walked away. Your pride took the long way."
     ],
     "correspondence": [
-      "Venus in Aquarius.\\\\nThe clash ends, but no one's smiling.",
+      "Venus in Aquarius.\nThe clash ends, but no one's smiling.",
       "Victory with a hollow echo."
     ]
   },
@@ -1770,7 +1770,7 @@ export const CARD_DATA: CardDataMap = {
       "You said you moved on. The sharp swords say otherwise."
     ],
     "correspondence": [
-      "Mercury in Aquarius.\\\\nThe blade turns toward the horizon.",
+      "Mercury in Aquarius.\nThe blade turns toward the horizon.",
       "Not escape, transition cloaked in shadow."
     ]
   },
@@ -1802,7 +1802,7 @@ export const CARD_DATA: CardDataMap = {
       "The trick backfires. The stars pretend to be surprised."
     ],
     "correspondence": [
-      "Moon in Aquarius.\\\\nFootsteps fade...",
+      "Moon in Aquarius.\nFootsteps fade...",
       "The truth stays hidden, tucked beneath a cloak of cunning."
     ]
   },
@@ -1834,7 +1834,7 @@ export const CARD_DATA: CardDataMap = {
       "The door opens. You hesitate, just for old times sake."
     ],
     "correspondence": [
-      "Jupiter in Gemini.\\\\nThe cage is made of thought.",
+      "Jupiter in Gemini.\nThe cage is made of thought.",
       "The key? Whispered by the wind, often unheard."
     ]
   },
@@ -1866,7 +1866,7 @@ export const CARD_DATA: CardDataMap = {
       "Night still knocks. But now you sleep with earplugs."
     ],
     "correspondence": [
-      "Mars in Gemini.\\\\nNight sharpens the mind into blades.",
+      "Mars in Gemini.\nNight sharpens the mind into blades.",
       "Sleep flees. Shadows gather to whisper."
     ]
   },
@@ -1898,7 +1898,7 @@ export const CARD_DATA: CardDataMap = {
       "You got back up. No applause, just a knowing breeze."
     ],
     "correspondence": [
-      "Sun in Gemini.\\\\nThe end is here, cruel and honest.",
+      "Sun in Gemini.\nThe end is here, cruel and honest.",
       "But from ruinâ€¦ air stirs once more."
     ]
   },
@@ -1930,7 +1930,7 @@ export const CARD_DATA: CardDataMap = {
       "Collecting information? Mostly gossip. Spirits are not bothered."
     ],
     "correspondence": [
-      "Earth of Air.\\\\nEyes sharp, tongue sharper.",
+      "Earth of Air.\nEyes sharp, tongue sharper.",
       "A question on every breeze, and no fear of storms."
     ]
   },
@@ -1962,7 +1962,7 @@ export const CARD_DATA: CardDataMap = {
       "You rode in like a storm. Now you're just a gentle breeze of regret."
     ],
     "correspondence": [
-      "Fire of Air.\\\\nHe charges thought-first, sword aloft.",
+      "Fire of Air.\nHe charges thought-first, sword aloft.",
       "Swift, certain, and frequently late to doubt."
     ]
   },
@@ -1994,7 +1994,7 @@ export const CARD_DATA: CardDataMap = {
       "Your insight is clouded. Perhaps by a dramatic fog of bitterness."
     ],
     "correspondence": [
-      "Water of Air.\\\\nShe sees all.",
+      "Water of Air.\nShe sees all.",
       "Her silence cuts cleaner than most speeches. Truth bows before her."
     ]
   },
@@ -2026,7 +2026,7 @@ export const CARD_DATA: CardDataMap = {
       "Your brilliant ideas have become a tyrannical decree. Good for you."
     ],
     "correspondence": [
-      "Air of Air.\\\\nThought distilled into command.",
+      "Air of Air.\nThought distilled into command.",
       "A ruler of reason: precise, cold, incorruptible."
     ]
   },
@@ -2153,7 +2153,7 @@ export const CARD_DATA: CardDataMap = {
       "Fear of loss. Which, ironically, invites loss."
     ],
     "correspondence": [
-      "Sun in Capricorn.\\\\nYou clutch the coin.\\\\nIt clutches back.",
+      "Sun in Capricorn.\nYou clutch the coin.\nIt clutches back.",
       "Security or stagnation? Hard to tell."
     ]
   },
@@ -2185,7 +2185,7 @@ export const CARD_DATA: CardDataMap = {
       "If help is offered, try not to squint suspiciously at it."
     ],
     "correspondence": [
-      "Mercury in Taurus.\\\\nDoors shut.\\\\nCold bites.",
+      "Mercury in Taurus.\nDoors shut.\nCold bites.",
       "But between silence and snowâ€¦ a light flickers."
     ]
   },
@@ -2217,7 +2217,7 @@ export const CARD_DATA: CardDataMap = {
       "Imbalance of power, this is. Like a Sith Lord, one grows, while the other withers."
     ],
     "correspondence": [
-      "Moon in Taurus.\\\\nThe hand gives.\\\\nThe hand receives.",
+      "Moon in Taurus.\nThe hand gives.\nThe hand receives.",
       "And both are tested by the weight of gold."
     ]
   },
@@ -2249,7 +2249,7 @@ export const CARD_DATA: CardDataMap = {
       "If you look ahead you'll see your future self is judging you."
     ],
     "correspondence": [
-      "Saturn in Taurus.\\\\nThe soil waits.\\\\nSo do you.",
+      "Saturn in Taurus.\nThe soil waits.\nSo do you.",
       "Patience blooms in the quiet between efforts."
     ]
   },
@@ -2281,7 +2281,7 @@ export const CARD_DATA: CardDataMap = {
       "Cutting corners. The universe notices. Eventually..."
     ],
     "correspondence": [
-      "Sun in Virgo.\\\\nThe rhythm of work.\\\\nEtch, shape, repeat.",
+      "Sun in Virgo.\nThe rhythm of work.\nEtch, shape, repeat.",
       "Mastery hums beneath the mundane."
     ]
   },

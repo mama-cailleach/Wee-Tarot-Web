@@ -1,14 +1,13 @@
 import Phaser from "phaser";
-import { buildLines } from "../data/oneCardReadingText";
-import type { ReadingResult } from "../data/types";
 import type { SoundManager } from "../systems/SoundManager";
-import { createWrappedText, initSceneCamera, onConfirm, type UiText } from "../systems/phaserUtils";
+import {
+  addGameText,
+  createWrappedText,
+  initSceneCamera,
+  onConfirm,
+  type UiText,
+} from "../systems/phaserUtils";
 
-interface OneCardPostData {
-  reading: ReadingResult;
-}
-
-// Matches the Playdate BaseSpreadPostScene oscillation.
 const DINAH_IDLE_ANIM_KEY = "dinah-idle";
 const DINAH_IDLE_FRAMES = 6;
 const DINAH_IDLE_FRAME_RATE = 8;
@@ -20,9 +19,22 @@ const OSC_AMPLITUDE = 3.7;
 const OSC_SPEED = 2.5;
 const SCROLL_REVEAL_DELAY_MS = 3200;
 
-export class OneCardPostScene extends Phaser.Scene {
-  private reading?: ReadingResult;
-  private lines: string[] = [];
+const INTRO_LINES = [
+  "...",
+  "Welcome to my humble abode, I've been expecting you.",
+  "Yes, yes... I can see... Your future is bright.",
+  "Care for a reading, darling?",
+  "Please...",
+  "Have a seat...",
+  "Don't be scared...",
+  "I speak only what I see, but to find more meaning in the cards is up to you.",
+];
+
+type MenuMode = "intro" | "menu";
+
+export class MenuScene extends Phaser.Scene {
+  private mode: MenuMode = "intro";
+  private lines: string[] = INTRO_LINES;
   private lineIndex = 0;
   private textBox?: UiText;
   private scrollSprite?: Phaser.GameObjects.Image;
@@ -30,26 +42,20 @@ export class OneCardPostScene extends Phaser.Scene {
   private dinahSprite?: Phaser.GameObjects.Sprite;
   private canAdvance = false;
   private oscillationStart?: number;
+  private menuObjects: Phaser.GameObjects.GameObject[] = [];
 
   constructor() {
-    super({ key: "OneCardPostScene" });
-  }
-
-  init(data: OneCardPostData): void {
-    this.reading = data.reading;
+    super({ key: "MenuScene" });
   }
 
   create(): void {
     initSceneCamera(this);
 
-    if (!this.reading) {
-      this.scene.start("TitleScene");
-      return;
-    }
-
+    this.mode = "intro";
     this.lineIndex = 0;
     this.canAdvance = false;
     this.oscillationStart = undefined;
+    this.menuObjects = [];
 
     this.dinahSprite = this.add.sprite(200, 120, "dinah-bg", 0).setDepth(0).setAlpha(0.9);
 
@@ -69,9 +75,6 @@ export class OneCardPostScene extends Phaser.Scene {
 
     this.dinahSprite.play(DINAH_IDLE_ANIM_KEY);
 
-    // One-card readings do not show a card preview (config.enableCardPreviews = false).
-    this.lines = buildLines(this.reading.cardName, this.reading.inverted).lines;
-
     this.scrollSprite = this.add.image(202, 300, "scroll-box").setDepth(2).setAlpha(0);
 
     this.tweens.add({
@@ -89,7 +92,7 @@ export class OneCardPostScene extends Phaser.Scene {
       },
     });
 
-    onConfirm(this, () => this.advance());
+    onConfirm(this, () => this.handleConfirm());
   }
 
   private soundManager(): SoundManager {
@@ -99,9 +102,9 @@ export class OneCardPostScene extends Phaser.Scene {
   private showCurrentLine(): void {
     this.textBox?.destroy();
     const line = this.lines[this.lineIndex] ?? "";
-    this.textBox = createWrappedText(this, 190, TEXT_BASE_Y, line.replace(/\*/g, ""), 310, {
+    this.textBox = createWrappedText(this, 190, TEXT_BASE_Y, line, 310, {
       fontSize: 20,
-      color: "#323027",
+      color: "#000000",
     });
   }
 
@@ -109,7 +112,13 @@ export class OneCardPostScene extends Phaser.Scene {
     this.iconSprite = this.add.image(360, ICON_BASE_Y, "icon-tri").setDepth(4).setScale(1.2);
   }
 
-  private advance(): void {
+  private handleConfirm(): void {
+    if (this.mode === "menu") {
+      this.soundManager().playSfx("sfx-a-but", { volume: 0.5 });
+      this.scene.start("OneCardGameScene");
+      return;
+    }
+
     if (!this.canAdvance) {
       return;
     }
@@ -120,16 +129,51 @@ export class OneCardPostScene extends Phaser.Scene {
       return;
     }
 
-    this.finishReading();
+    this.enterMenu();
   }
 
-  private finishReading(): void {
-    this.soundManager().playSfx("sfx-a-but", { volume: 0.5 });
-    this.scene.start("TitleScene");
+  private enterMenu(): void {
+    this.textBox?.destroy();
+    this.textBox = undefined;
+    this.scrollSprite?.destroy();
+    this.scrollSprite = undefined;
+    this.iconSprite?.destroy();
+    this.iconSprite = undefined;
+    this.oscillationStart = undefined;
+    this.mode = "menu";
+
+    const settingsLabel = addGameText(this, 65, 220, "menu", {
+      fontSize: 20,
+    }).setOrigin(0.5, 0.5);
+    this.menuObjects.push(settingsLabel);
+
+    this.time.delayedCall(34, () => {
+      const readingLabel = addGameText(this, 325, 220, "reading", {
+        fontSize: 20,
+      }).setOrigin(0.5, 0.5);
+      this.menuObjects.push(readingLabel);
+
+      this.menuObjects.push(this.makeMenuButton("M", 16, 223, 14));
+      this.menuObjects.push(this.makeMenuButton("R", 384, 223, 14));
+    });
+  }
+
+  private makeMenuButton(letter: string, x: number, y: number, radius: number): Phaser.GameObjects.Container {
+    const container = this.add.container(x, y).setDepth(5);
+
+    const circle = this.add.circle(0, 0, radius, 0xa9a9a9).setStrokeStyle(2, 0x323027);
+    const label = addGameText(this, 0, 0, letter, {
+      fontSize: 16,
+      color: "#323027",
+      align: "center",
+    }).setOrigin(0.5, 0.5);
+
+    container.add([circle, label]);
+    return container;
   }
 
   update(): void {
-    if (this.oscillationStart === undefined) {
+    if (this.mode !== "intro" || this.oscillationStart === undefined) {
       return;
     }
 

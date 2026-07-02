@@ -17,14 +17,16 @@ type GameTextStyle = {
   wordWrap?: { width: number };
 };
 
+const DEFAULT_TEXT_COLOR = 0xa9aaad;
+
 function parseTint(color?: string): number {
   if (!color) {
-    return 0x000000;
+    return DEFAULT_TEXT_COLOR;
   }
   if (color.startsWith("#")) {
     return Number.parseInt(color.slice(1), 16);
   }
-  return 0x000000;
+  return DEFAULT_TEXT_COLOR;
 }
 
 export function addGameText(
@@ -134,14 +136,14 @@ export function createWrappedText(
   }).setOrigin(0.5, 0.5);
 }
 
-export function confirmPressed(scene: Phaser.Scene): boolean {
-  const space = scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-  const enter = scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
-  const pointer = scene.input.activePointer;
-  const tapped = pointer.isDown && pointer.getDuration() > 0 && pointer.getDuration() <= 50;
-  return (
-    (space !== undefined && Phaser.Input.Keyboard.JustDown(space)) ||
-    (enter !== undefined && Phaser.Input.Keyboard.JustDown(enter)) ||
-    tapped
-  );
+/**
+ * Registers an edge-triggered "confirm" action. Space, Enter, and a mouse/touch
+ * tap all fire the handler exactly once per press, so a click behaves like a
+ * single Space press (no multi-advance while the button is held). Listeners are
+ * bound to the scene's input and are cleaned up automatically on scene shutdown.
+ */
+export function onConfirm(scene: Phaser.Scene, handler: () => void): void {
+  scene.input.keyboard?.on("keydown-SPACE", handler);
+  scene.input.keyboard?.on("keydown-ENTER", handler);
+  scene.input.on(Phaser.Input.Events.POINTER_DOWN, handler);
 }

@@ -15,7 +15,7 @@ $assets = @(
     "assets\images\bg\darkcloth.png",
     "assets\images\bg\dinahBG-table-400-266.png",
     "assets\images\decknback\placementzone_diamond.png",
-    "assets\images\textscroll\scroll1b.png",
+    "assets\images\textscroll\scroll1c.png",
     "assets\images\shuffleAnimation\1_card_shuffle-table-400-240.png",
     "assets\images\shuffleAnimation\card_spin_slide-table-400-240.png",
     "assets\images\shuffleAnimation\deck_laying_full_lower-table-400-240.png",

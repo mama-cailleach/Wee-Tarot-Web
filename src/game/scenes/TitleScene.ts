@@ -50,8 +50,8 @@ export class TitleScene extends Phaser.Scene {
       }
     }
 
-    this.prompt = createWrappedText(this, 200, 215, "Space: intro  |  A: skip to game", 360, {
-      fontSize: 12,
+    this.prompt = createWrappedText(this, 198, 210, "Tap to start", 360, {
+      fontSize: 20,
     });
 
     this.input.keyboard?.on("keydown-SPACE", () => this.begin());
@@ -67,7 +67,7 @@ export class TitleScene extends Phaser.Scene {
 
   update(): void {
     if (this.keyA && Phaser.Input.Keyboard.JustDown(this.keyA)) {
-      this.goToGame();
+      this.goToMenu();
     }
 
     if (!this.animating) {
@@ -76,7 +76,7 @@ export class TitleScene extends Phaser.Scene {
 
     if (this.introCompletePending) {
       if (this.time.now >= this.introHoldUntil) {
-        this.goToGame();
+        this.goToMenu();
       }
       return;
     }
@@ -105,7 +105,7 @@ export class TitleScene extends Phaser.Scene {
       return;
     }
 
-    this.goToGame();
+    this.goToMenu();
   }
 
   private onTitleIntroComplete(): void {
@@ -118,8 +118,8 @@ export class TitleScene extends Phaser.Scene {
     this.introHoldUntil = this.time.now + TITLE_END_HOLD_MS;
   }
 
-  private goToGame(): void {
-    console.log("[TitleScene] → OneCardGameScene (Phaser scene.start)");
-    this.scene.start("OneCardGameScene");
+  private goToMenu(): void {
+    console.log("[TitleScene] → MenuScene (Phaser scene.start)");
+    this.scene.start("MenuScene");
   }
 }

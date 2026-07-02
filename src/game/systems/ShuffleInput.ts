@@ -28,13 +28,14 @@ export class ShuffleInput {
       .setInteractive({ useHandCursor: true });
 
     this.autoButtonBg = scene.add
-      .rectangle(340, 220, 88, 22, 0xffffff, 1)
-      .setStrokeStyle(1, 0x000000)
+      .rectangle(340, 220, 69, 22, 0xa9a9a9, 1)
+      .setStrokeStyle(1, 0x323027)
       .setDepth(UI_DEPTH)
       .setInteractive({ useHandCursor: true });
 
-    this.autoLabel = addGameText(scene, 340, 220, "Auto shuffle", {
+    this.autoLabel = addGameText(scene, 340, 220, "Shuffle", {
       fontSize: 10,
+      color: "#323027",
       align: "center",
     })
       .setOrigin(0.5)

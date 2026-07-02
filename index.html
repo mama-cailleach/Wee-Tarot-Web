@@ -22,6 +22,7 @@
         background: #000;
       }
 
+      /* Full-viewport centering box. Also the size reference for integer zoom. */
       #game {
         width: 100%;
         height: 100%;
@@ -33,6 +34,9 @@
       #game canvas {
         image-rendering: pixelated;
         image-rendering: crisp-edges;
+        /* Yellow frame around the screen. box-shadow spread stays a constant
+           thickness and does not affect canvas sizing/scaling. */
+        box-shadow: 0 0 0 4px #f2c744;
       }
     </style>
   </head>

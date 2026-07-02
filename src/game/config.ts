@@ -34,7 +34,7 @@ export const SLICE_ASSETS = {
     darkcloth: assetUrl("images", "bg", "darkcloth.png"),
     dinahBg: assetUrl("images", "bg", "dinahBG-table-400-266.png"),
     placementDiamond: assetUrl("images", "decknback", "placementzone_diamond.png"),
-    scrollBox: assetUrl("images", "textscroll", "scroll1b.png"),
+    scrollBox: assetUrl("images", "textscroll", "scroll1h.png"),
     shuffle: assetUrl("images", "shuffleAnimation", "1_card_shuffle-table-400-240.png"),
     cardSpinSlide: assetUrl("images", "shuffleAnimation", "card_spin_slide-table-400-240.png"),
     deckLaying: assetUrl("images", "shuffleAnimation", "deck_laying_full_lower-table-400-240.png"),

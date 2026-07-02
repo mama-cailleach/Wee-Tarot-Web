@@ -1,10 +1,10 @@
 import Phaser from "phaser";
-import { GAME_HEIGHT, GAME_WIDTH, getCardImageUrl } from "../config";
+import { getCardImageUrl } from "../config";
 import type { ReadingResult } from "../data/types";
 import { AutoShuffleDriver, ShuffleInput } from "../systems/ShuffleInput";
 import { Deck } from "../systems/Deck";
 import { SoundManager } from "../systems/SoundManager";
-import { addGameText, confirmPressed, createWrappedText, initSceneCamera, playSpritesheetOnce, type UiText } from "../systems/phaserUtils";
+import { addGameText, createWrappedText, initSceneCamera, onConfirm, playSpritesheetOnce, type UiText } from "../systems/phaserUtils";
 
 type GameState = "intro" | "shuffle" | "revealing" | "fortune" | "revealed";
 
@@ -18,6 +18,7 @@ const FIRST_PROMPTS = [
 export class OneCardGameScene extends Phaser.Scene {
   private state: GameState = "intro";
   private deck = new Deck();
+  private bgImage?: Phaser.GameObjects.Image;
   private shuffleSprite?: Phaser.GameObjects.Sprite;
   private spinSlideSprite?: Phaser.GameObjects.Sprite;
   private placementSprite?: Phaser.GameObjects.Image;
@@ -53,17 +54,10 @@ export class OneCardGameScene extends Phaser.Scene {
       this.textures.exists("playspace"),
     );
 
-    this.cameras.main.setBackgroundColor("#d4edda");
+    this.cameras.main.setBackgroundColor("#000000");
     this.cameras.main.setVisible(true);
 
-    this.add
-      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0xd4edda)
-      .setDepth(0);
-
-    addGameText(this, 200, 120, "ONE CARD GAME", {
-      fontSize: 20,
-      align: "center",
-    }).setOrigin(0.5);
+    this.bgImage = this.add.image(200, 120, "playspace").setDepth(0);
 
     this.state = "intro";
     this.shuffleFrame = 1;
@@ -71,7 +65,8 @@ export class OneCardGameScene extends Phaser.Scene {
     this.spinSlideTriggered = false;
     this.spinSlideTriggerSpinCount = Phaser.Math.Between(5, 8);
 
-    this.add.image(200, 120, "playspace").setDepth(0);
+    onConfirm(this, () => this.tryOpenReading());
+
     this.startDeckLayingIntro();
   }
 
@@ -91,9 +86,10 @@ export class OneCardGameScene extends Phaser.Scene {
 
   private enterShuffle(): void {
     this.state = "shuffle";
-    this.add.image(200, 120, "darkcloth").setDepth(1);
+    // Background stays as the tarot playspace during shuffle; darkcloth only
+    // appears at the reveal/placement step.
 
-    this.shuffleSprite = this.add.sprite(220, 135, "shuffle", 0).setDepth(3);
+    this.shuffleSprite = this.add.sprite(200, 120, "shuffle", 0).setDepth(3);
     this.shuffleFrameCount = this.shuffleSprite.texture.frameTotal;
     this.shuffleFrame = 1;
 
@@ -200,6 +196,9 @@ export class OneCardGameScene extends Phaser.Scene {
   }
 
   private showPlacementAndDraw(): void {
+    // Swap the playspace background for the darkcloth at the reveal step.
+    this.bgImage?.setTexture("darkcloth");
+
     this.placementSprite = this.add
       .image(200, 120, "placement-diamond")
       .setDepth(2)
@@ -268,15 +267,12 @@ export class OneCardGameScene extends Phaser.Scene {
     }).setDepth(10);
   }
 
-  update(): void {
-    if (this.state !== "revealed") {
+  private tryOpenReading(): void {
+    if (this.state !== "revealed" || !this.drawResult) {
       return;
     }
-
-    if (confirmPressed(this) && this.drawResult) {
-      this.soundManager().playSfx("sfx-a-but", { volume: 0.5 });
-      this.scene.start("OneCardPostScene", { reading: this.drawResult });
-    }
+    this.soundManager().playSfx("sfx-a-but", { volume: 0.5 });
+    this.scene.start("OneCardPostScene", { reading: this.drawResult });
   }
 
   shutdown(): void {
