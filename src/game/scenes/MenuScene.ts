@@ -30,6 +30,8 @@ const INTRO_LINES = [
   "I speak only what I see, but to find more meaning in the cards is up to you.",
 ];
 
+const MENU_INTRO_SEEN_KEY = "menuIntroSeen";
+
 type MenuMode = "intro" | "menu";
 
 export class MenuScene extends Phaser.Scene {
@@ -51,12 +53,40 @@ export class MenuScene extends Phaser.Scene {
   create(): void {
     initSceneCamera(this);
 
-    this.mode = "intro";
     this.lineIndex = 0;
     this.canAdvance = false;
     this.oscillationStart = undefined;
     this.menuObjects = [];
 
+    this.setupDinah();
+
+    onConfirm(this, () => this.handleConfirm());
+
+    if (this.registry.get(MENU_INTRO_SEEN_KEY)) {
+      this.showMenuOptions();
+      return;
+    }
+
+    this.mode = "intro";
+    this.scrollSprite = this.add.image(202, 300, "scroll-box").setDepth(2).setAlpha(0);
+
+    this.tweens.add({
+      targets: this.scrollSprite,
+      y: SCROLL_BASE_Y,
+      alpha: 1,
+      duration: 900,
+      ease: "Cubic.easeOut",
+      delay: SCROLL_REVEAL_DELAY_MS,
+      onComplete: () => {
+        this.canAdvance = true;
+        this.showCurrentLine();
+        this.showAdvanceHint();
+        this.oscillationStart = this.time.now;
+      },
+    });
+  }
+
+  private setupDinah(): void {
     this.dinahSprite = this.add.sprite(200, 120, "dinah-bg", 0).setDepth(0).setAlpha(0.9);
 
     if (!this.anims.exists(DINAH_IDLE_ANIM_KEY)) {
@@ -74,25 +104,6 @@ export class MenuScene extends Phaser.Scene {
     }
 
     this.dinahSprite.play(DINAH_IDLE_ANIM_KEY);
-
-    this.scrollSprite = this.add.image(202, 300, "scroll-box").setDepth(2).setAlpha(0);
-
-    this.tweens.add({
-      targets: this.scrollSprite,
-      y: SCROLL_BASE_Y,
-      alpha: 1,
-      duration: 900,
-      ease: "Cubic.easeOut",
-      delay: SCROLL_REVEAL_DELAY_MS,
-      onComplete: () => {
-        this.canAdvance = true;
-        this.showCurrentLine();
-        this.showAdvanceHint();
-        this.oscillationStart = this.time.now;
-      },
-    });
-
-    onConfirm(this, () => this.handleConfirm());
   }
 
   private soundManager(): SoundManager {
@@ -140,7 +151,14 @@ export class MenuScene extends Phaser.Scene {
     this.iconSprite?.destroy();
     this.iconSprite = undefined;
     this.oscillationStart = undefined;
+
+    this.registry.set(MENU_INTRO_SEEN_KEY, true);
+    this.showMenuOptions();
+  }
+
+  private showMenuOptions(): void {
     this.mode = "menu";
+    this.canAdvance = true;
 
     const settingsLabel = addGameText(this, 65, 220, "menu", {
       fontSize: 20,

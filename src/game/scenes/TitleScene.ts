@@ -30,6 +30,9 @@ export class TitleScene extends Phaser.Scene {
 
     console.log("[TitleScene] create");
 
+    const sound = this.registry.get("sound") as SoundManager;
+    sound.startBgMusic(true);
+
     if (this.textures.exists("title-anim-sheet")) {
       this.titleSprite = this.add
         .sprite(200, 120, "title-anim-sheet", 0)
@@ -119,6 +122,8 @@ export class TitleScene extends Phaser.Scene {
   }
 
   private goToMenu(): void {
+    const sound = this.registry.get("sound") as SoundManager;
+    sound.leaveTitleMusicLoop();
     console.log("[TitleScene] → MenuScene (Phaser scene.start)");
     this.scene.start("MenuScene");
   }

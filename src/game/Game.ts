@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import { GAME_HEIGHT, GAME_WIDTH } from "./config";
 import { BootScene } from "./scenes/BootScene";
+import { LaunchScene } from "./scenes/LaunchScene";
 import { MenuScene } from "./scenes/MenuScene";
 import { OneCardGameScene } from "./scenes/OneCardGameScene";
 import { OneCardPostScene } from "./scenes/OneCardPostScene";
@@ -26,7 +27,7 @@ export function createGame(parent: string | HTMLElement): Phaser.Game {
       width: GAME_WIDTH,
       height: GAME_HEIGHT,
     },
-    scene: [BootScene, OneCardGameScene, TitleScene, MenuScene, OneCardPostScene],
+    scene: [BootScene, LaunchScene, OneCardGameScene, TitleScene, MenuScene, OneCardPostScene],
     audio: {
       disableWebAudio: false,
     },

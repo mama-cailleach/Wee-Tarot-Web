@@ -19,9 +19,9 @@ export class BootScene extends Phaser.Scene {
   }
 
   create(): void {
-    console.log("[BootScene] create → starting TitleScene");
+    console.log("[BootScene] create → starting LaunchScene");
     this.registry.set("sound", new SoundManager(this));
     this.cameras.main.setVisible(false);
-    this.scene.start("TitleScene");
+    this.scene.start("LaunchScene");
   }
 }

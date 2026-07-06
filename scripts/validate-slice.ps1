@@ -9,7 +9,7 @@ function Assert-File($path) {
 }
 
 $assets = @(
-    "assets\system\launchImage.png",
+    "assets\images\bg\launchImage.png",
     "assets\images\bg\titleBGAnim-table-400-391.png",
     "assets\images\bg\tarot_playspace.png",
     "assets\images\bg\darkcloth.png",
@@ -45,6 +45,7 @@ $srcFiles = @(
     "src\main.ts",
     "src\game\Game.ts",
     "src\game\scenes\BootScene.ts",
+    "src\game\scenes\LaunchScene.ts",
     "src\game\scenes\TitleScene.ts",
     "src\game\scenes\OneCardGameScene.ts",
     "src\game\scenes\OneCardPostScene.ts"

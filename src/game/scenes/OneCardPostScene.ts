@@ -43,7 +43,7 @@ export class OneCardPostScene extends Phaser.Scene {
     initSceneCamera(this);
 
     if (!this.reading) {
-      this.scene.start("TitleScene");
+      this.scene.start("MenuScene");
       return;
     }
 
@@ -125,7 +125,7 @@ export class OneCardPostScene extends Phaser.Scene {
 
   private finishReading(): void {
     this.soundManager().playSfx("sfx-a-but", { volume: 0.5 });
-    this.scene.start("TitleScene");
+    this.scene.start("MenuScene");
   }
 
   update(): void {

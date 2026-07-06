@@ -28,7 +28,7 @@ export function parseSpritesheetMeta(filename: string): SpritesheetMeta | null {
 
 export const SLICE_ASSETS = {
   images: {
-    launchImage: assetUrl("system", "launchImage.png"),
+    launchImage: assetUrl("images", "bg", "launchImage.png"),
     titleAnim: assetUrl("images", "bg", "titleBGAnim-table-400-391.png"),
     tarotPlayspace: assetUrl("images", "bg", "tarot_playspace.png"),
     darkcloth: assetUrl("images", "bg", "darkcloth.png"),
