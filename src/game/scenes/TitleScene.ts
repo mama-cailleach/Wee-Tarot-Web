@@ -54,14 +54,30 @@ export class TitleScene extends Phaser.Scene {
       }
     }
 
-    this.prompt = createWrappedText(this, 198, 210, "Tap to start", 360, {
+    this.prompt = createWrappedText(this, 198, 40, "WEE TAROT", 360, {
       fontSize: 20,
     });
 
-    setChromeActions({ confirm: true, shuffle: false, zoom: false, back: false });
+    this.prompt = createWrappedText(this, 198, 210, "Press to start", 360, {
+      fontSize: 20,
+    });
+
+    setChromeActions({
+      confirm: true,
+      shuffle: false,
+      zoom: false,
+      back: false,
+      start: true,
+    });
     onConfirm(this, () => this.begin());
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      setChromeActions({ confirm: false, shuffle: false, zoom: false, back: false });
+      setChromeActions({
+        confirm: false,
+        shuffle: false,
+        zoom: false,
+        back: false,
+        start: false,
+      });
     });
 
     if (this.input.keyboard) {
@@ -104,7 +120,7 @@ export class TitleScene extends Phaser.Scene {
 
     const sound = this.registry.get("sound") as SoundManager;
     sound.unlock();
-    sound.playSfx("sfx-tuin", { volume: 0.5 });
+    sound.playSfx("title-start", { volume: 1 });
 
     if (this.titleSprite && this.anims.exists(TITLE_ANIM_KEY)) {
       this.titleSprite.play(TITLE_ANIM_KEY);

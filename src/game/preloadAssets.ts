@@ -17,9 +17,11 @@ export function preloadSliceAssets(scene: Phaser.Scene): void {
   loadTarothequeFont(scene);
 
   scene.load.image("launch", SLICE_ASSETS.images.launchImage);
+  scene.load.image("launch-prompt", SLICE_ASSETS.images.launchImage2);
   sheet(scene, "title-anim-sheet", SLICE_ASSETS.images.titleAnim);
   scene.load.image("playspace", SLICE_ASSETS.images.tarotPlayspace);
   scene.load.image("darkcloth", SLICE_ASSETS.images.darkcloth);
+  scene.load.image("icon-tri-smol", SLICE_ASSETS.images.iconTriSmol);
   sheet(scene, "dinah-bg", SLICE_ASSETS.images.dinahBg);
   scene.load.image("placement-diamond", SLICE_ASSETS.images.placementDiamond);
   scene.load.image("scroll-box", SLICE_ASSETS.images.scrollBox);
@@ -37,5 +39,8 @@ export function preloadSliceAssets(scene: Phaser.Scene): void {
   scene.load.audio("sfx-crank", SLICE_ASSETS.audio.crank);
   scene.load.audio("sfx-tuin", SLICE_ASSETS.audio.tuin);
   scene.load.audio("sfx-a-but", SLICE_ASSETS.audio.aBut);
+  scene.load.audio("sfx-b-button", SLICE_ASSETS.audio.bButton);
+  scene.load.audio("sfx-hahahaha", SLICE_ASSETS.audio.hahahaha);
   scene.load.audio("music-bg", SLICE_ASSETS.audio.bgMusic);
+  scene.load.audio("title-start", SLICE_ASSETS.audio.titleStart);
 }

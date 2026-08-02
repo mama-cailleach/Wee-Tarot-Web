@@ -100,6 +100,30 @@
         padding: 0 18px;
         border-radius: 999px;
       }
+
+      #chrome-nav {
+        display: none;
+        align-items: center;
+        gap: 10px;
+      }
+
+      #chrome-nav.is-visible {
+        display: flex;
+      }
+
+      #btn-up,
+      #btn-down {
+        min-width: 56px;
+        width: 56px;
+        padding: 0;
+        border-radius: 50%;
+        font-size: 18px;
+        line-height: 1;
+      }
+
+      #btn-middle.is-hidden {
+        display: none;
+      }
     </style>
   </head>
   <body>
@@ -108,7 +132,11 @@
         <div id="game"></div>
         <div id="chrome" aria-label="Game controls">
           <button type="button" id="btn-back" disabled aria-label="Back">&lt;</button>
-          <button type="button" id="btn-middle" disabled>Shuffle</button>
+          <button type="button" id="btn-middle" class="is-hidden" disabled>Shuffle</button>
+          <div id="chrome-nav" aria-label="Navigate">
+            <button type="button" id="btn-up" disabled aria-label="Up">▲</button>
+            <button type="button" id="btn-down" disabled aria-label="Down">▼</button>
+          </div>
           <button type="button" id="btn-confirm" disabled aria-label="Confirm">&gt;</button>
         </div>
       </div>

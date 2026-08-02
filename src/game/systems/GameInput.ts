@@ -4,45 +4,87 @@ export const INPUT_CONFIRM = "input:confirm";
 export const INPUT_AUTO_SHUFFLE = "input:autoShuffle";
 export const INPUT_ZOOM = "input:zoom";
 export const INPUT_BACK = "input:back";
+export const INPUT_UP = "input:up";
+export const INPUT_DOWN = "input:down";
 
 export type ChromeActions = {
   confirm: boolean;
   shuffle: boolean;
   zoom: boolean;
   back: boolean;
+  /** Show Up/Down chrome pair (settings-only); hides middle button. */
+  navigate: boolean;
+  /** Middle button labeled Start; emits confirm (Launch/Title). */
+  start: boolean;
 };
 
 function chromeButtons(): {
   confirm: HTMLButtonElement | null;
   middle: HTMLButtonElement | null;
   back: HTMLButtonElement | null;
+  up: HTMLButtonElement | null;
+  down: HTMLButtonElement | null;
+  nav: HTMLElement | null;
 } {
   return {
     confirm: document.getElementById("btn-confirm") as HTMLButtonElement | null,
     middle: document.getElementById("btn-middle") as HTMLButtonElement | null,
     back: document.getElementById("btn-back") as HTMLButtonElement | null,
+    up: document.getElementById("btn-up") as HTMLButtonElement | null,
+    down: document.getElementById("btn-down") as HTMLButtonElement | null,
+    nav: document.getElementById("chrome-nav"),
   };
 }
 
-type MiddleMode = "none" | "shuffle" | "zoom";
+type MiddleMode = "none" | "shuffle" | "zoom" | "start";
 
 let middleMode: MiddleMode = "none";
+let navigateVisible = false;
 
 function applyMiddleMode(mode: MiddleMode): void {
   middleMode = mode;
   const middle = chromeButtons().middle;
-  if (!middle) {
+  if (!middle || navigateVisible) {
     return;
   }
 
   if (mode === "shuffle") {
     middle.textContent = "Shuffle";
     middle.disabled = false;
+    middle.classList.remove("is-hidden");
   } else if (mode === "zoom") {
     middle.textContent = "Zoom";
     middle.disabled = false;
+    middle.classList.remove("is-hidden");
+  } else if (mode === "start") {
+    middle.textContent = "Start";
+    middle.disabled = false;
+    middle.classList.remove("is-hidden");
   } else {
     middle.disabled = true;
+    middle.classList.add("is-hidden");
+  }
+}
+
+function applyNavigateVisible(visible: boolean): void {
+  navigateVisible = visible;
+  const buttons = chromeButtons();
+
+  if (buttons.nav) {
+    buttons.nav.classList.toggle("is-visible", visible);
+  }
+  if (buttons.middle) {
+    buttons.middle.classList.toggle("is-hidden", visible);
+  }
+  if (buttons.up) {
+    buttons.up.disabled = !visible;
+  }
+  if (buttons.down) {
+    buttons.down.disabled = !visible;
+  }
+
+  if (!visible) {
+    applyMiddleMode(middleMode);
   }
 }
 
@@ -58,14 +100,25 @@ export function setChromeActions(actions: Partial<ChromeActions>): void {
     buttons.back.disabled = !actions.back;
   }
 
+  if (actions.navigate !== undefined) {
+    applyNavigateVisible(actions.navigate);
+  }
+
   const nextShuffle = actions.shuffle ?? false;
   const nextZoom = actions.zoom ?? false;
+  const nextStart = actions.start ?? false;
 
-  if (actions.shuffle !== undefined || actions.zoom !== undefined) {
+  if (
+    actions.shuffle !== undefined ||
+    actions.zoom !== undefined ||
+    actions.start !== undefined
+  ) {
     if (nextZoom) {
       applyMiddleMode("zoom");
     } else if (nextShuffle) {
       applyMiddleMode("shuffle");
+    } else if (nextStart) {
+      applyMiddleMode("start");
     } else {
       applyMiddleMode("none");
     }
@@ -86,6 +139,14 @@ export function emitZoom(game: Phaser.Game): void {
 
 export function emitBack(game: Phaser.Game): void {
   game.events.emit(INPUT_BACK);
+}
+
+export function emitUp(game: Phaser.Game): void {
+  game.events.emit(INPUT_UP);
+}
+
+export function emitDown(game: Phaser.Game): void {
+  game.events.emit(INPUT_DOWN);
 }
 
 function refocusCanvas(game: Phaser.Game): void {
@@ -122,15 +183,26 @@ export function bindChromeControls(game: Phaser.Game): void {
 
   bindPress(buttons.confirm, () => emitConfirm(game));
   bindPress(buttons.back, () => emitBack(game));
+  bindPress(buttons.up, () => emitUp(game));
+  bindPress(buttons.down, () => emitDown(game));
   bindPress(buttons.middle, () => {
     if (middleMode === "shuffle") {
       emitAutoShuffle(game);
     } else if (middleMode === "zoom") {
       emitZoom(game);
+    } else if (middleMode === "start") {
+      emitConfirm(game);
     }
   });
 
-  setChromeActions({ confirm: false, shuffle: false, zoom: false, back: false });
+  setChromeActions({
+    confirm: false,
+    shuffle: false,
+    zoom: false,
+    back: false,
+    navigate: false,
+    start: false,
+  });
 }
 
 /**
@@ -199,5 +271,41 @@ export function bindBack(scene: Phaser.Scene, handler: () => void): void {
 
   scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
     game.events.off(INPUT_BACK, onBus);
+  });
+}
+
+/**
+ * Register an up-navigate handler (chrome ▲ + keyboard Up).
+ * Cleaned up automatically on scene shutdown.
+ */
+export function bindUp(scene: Phaser.Scene, handler: () => void): void {
+  const game = scene.game;
+  const onBus = () => handler();
+  const onKey = () => emitUp(game);
+
+  game.events.on(INPUT_UP, onBus);
+  scene.input.keyboard?.on("keydown-UP", onKey);
+
+  scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+    game.events.off(INPUT_UP, onBus);
+    scene.input.keyboard?.off("keydown-UP", onKey);
+  });
+}
+
+/**
+ * Register a down-navigate handler (chrome ▼ + keyboard Down).
+ * Cleaned up automatically on scene shutdown.
+ */
+export function bindDown(scene: Phaser.Scene, handler: () => void): void {
+  const game = scene.game;
+  const onBus = () => handler();
+  const onKey = () => emitDown(game);
+
+  game.events.on(INPUT_DOWN, onBus);
+  scene.input.keyboard?.on("keydown-DOWN", onKey);
+
+  scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+    game.events.off(INPUT_DOWN, onBus);
+    scene.input.keyboard?.off("keydown-DOWN", onKey);
   });
 }

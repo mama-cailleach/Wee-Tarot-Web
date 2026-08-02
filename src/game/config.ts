@@ -29,9 +29,11 @@ export function parseSpritesheetMeta(filename: string): SpritesheetMeta | null {
 export const SLICE_ASSETS = {
   images: {
     launchImage: assetUrl("images", "bg", "launchImage.png"),
+    launchImage2: assetUrl("images", "bg", "launchImage2.png"),
     titleAnim: assetUrl("images", "bg", "titleBGAnim-table-400-391.png"),
     tarotPlayspace: assetUrl("images", "bg", "tarot_playspace.png"),
     darkcloth: assetUrl("images", "bg", "darkcloth.png"),
+    iconTriSmol: assetUrl("images", "bg", "icon_tri_smol.png"),
     dinahBg: assetUrl("images", "bg", "dinahBG-table-400-266.png"),
     placementDiamond: assetUrl("images", "decknback", "placementzone_diamond.png"),
     scrollBox: assetUrl("images", "textscroll", "scroll1h.png"),
@@ -49,7 +51,10 @@ export const SLICE_ASSETS = {
     crank: assetUrl("sound", "crank5.wav"),
     tuin: assetUrl("sound", "tuin.wav"),
     aBut: assetUrl("sound", "a_but1.wav"),
+    bButton: assetUrl("sound", "b_button.wav"),
+    hahahaha: assetUrl("sound", "hahahaha2.wav"),
     bgMusic: assetUrl("sound", "bgMusic3quieter.wav"),
+    titleStart: assetUrl("sound", "cards_fast.wav"),
   },
 } as const;
 

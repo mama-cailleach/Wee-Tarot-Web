@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import { getCardImageUrl } from "../config";
 import type { ReadingResult } from "../data/types";
 import { Deck } from "../systems/Deck";
+import { getDeckMode } from "../systems/deckMode";
 import { bindAutoShuffle, bindZoom, setChromeActions } from "../systems/GameInput";
 import { SoundManager } from "../systems/SoundManager";
 import {
@@ -182,7 +183,7 @@ export class OneCardGameScene extends Phaser.Scene {
   }
 
   private drawSingleCard(): void {
-    const result = this.deck.drawByFilter("full");
+    const result = this.deck.drawByFilter(getDeckMode(this.registry));
     if (!result) {
       return;
     }

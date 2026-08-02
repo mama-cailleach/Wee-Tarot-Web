@@ -89,10 +89,6 @@ export class CardReviewScene extends Phaser.Scene {
       this.cardSprite.setAngle(180);
     }
 
-    createWrappedText(this, 200, 210, "Tap to continue", 360, {
-      fontSize: 12,
-    }).setDepth(10);
-
     this.canLeave = true;
     setChromeActions({ confirm: true, shuffle: false, zoom: true, back: false });
   }

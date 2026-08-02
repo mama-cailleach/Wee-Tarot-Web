@@ -4,8 +4,11 @@ import { setChromeActions } from "../systems/GameInput";
 import type { SoundManager } from "../systems/SoundManager";
 import { initSceneCamera, onConfirm } from "../systems/phaserUtils";
 
+const SPLASH_HOLD_MS = 2000;
+
 export class LaunchScene extends Phaser.Scene {
   private proceeded = false;
+  private canStart = false;
 
   constructor() {
     super({ key: "LaunchScene" });
@@ -14,18 +17,46 @@ export class LaunchScene extends Phaser.Scene {
   create(): void {
     initSceneCamera(this);
     this.proceeded = false;
+    this.canStart = false;
 
-    this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, "launch");
+    const splash = this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, "launch");
 
-    setChromeActions({ confirm: true, shuffle: false, zoom: false, back: false });
+    setChromeActions({
+      confirm: false,
+      shuffle: false,
+      zoom: false,
+      back: false,
+      start: false,
+    });
     onConfirm(this, () => this.proceed());
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      setChromeActions({ confirm: false, shuffle: false, zoom: false, back: false });
+      setChromeActions({
+        confirm: false,
+        shuffle: false,
+        zoom: false,
+        back: false,
+        start: false,
+      });
+    });
+
+    this.time.delayedCall(SPLASH_HOLD_MS, () => {
+      if (this.proceeded) {
+        return;
+      }
+      splash.setTexture("launch-prompt");
+      this.canStart = true;
+      setChromeActions({
+        confirm: true,
+        shuffle: false,
+        zoom: false,
+        back: false,
+        start: true,
+      });
     });
   }
 
   private proceed(): void {
-    if (this.proceeded) {
+    if (this.proceeded || !this.canStart) {
       return;
     }
     this.proceeded = true;

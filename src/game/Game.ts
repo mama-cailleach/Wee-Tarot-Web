@@ -2,10 +2,12 @@ import Phaser from "phaser";
 import { GAME_HEIGHT, GAME_WIDTH } from "./config";
 import { BootScene } from "./scenes/BootScene";
 import { CardReviewScene } from "./scenes/CardReviewScene";
+import { HowToScene } from "./scenes/HowToScene";
 import { LaunchScene } from "./scenes/LaunchScene";
 import { MenuScene } from "./scenes/MenuScene";
 import { OneCardGameScene } from "./scenes/OneCardGameScene";
 import { OneCardPostScene } from "./scenes/OneCardPostScene";
+import { SettingsScene } from "./scenes/SettingsScene";
 import { TitleScene } from "./scenes/TitleScene";
 import { bindIntegerScale } from "./scale";
 
@@ -34,6 +36,8 @@ export function createGame(parent: string | HTMLElement): Phaser.Game {
       OneCardGameScene,
       TitleScene,
       MenuScene,
+      SettingsScene,
+      HowToScene,
       OneCardPostScene,
       CardReviewScene,
     ],

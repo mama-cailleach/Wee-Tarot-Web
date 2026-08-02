@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { setChromeActions } from "../systems/GameInput";
+import { bindBack, setChromeActions } from "../systems/GameInput";
 import type { SoundManager } from "../systems/SoundManager";
 import {
   addGameText,
@@ -59,10 +59,26 @@ export class MenuScene extends Phaser.Scene {
 
     this.setupDinah();
 
-    setChromeActions({ confirm: false, shuffle: false, zoom: false, back: false });
+    setChromeActions({
+      confirm: false,
+      shuffle: false,
+      zoom: false,
+      back: false,
+      navigate: false,
+    });
     onConfirm(this, () => this.handleConfirm());
+    bindBack(this, () => this.openSettings());
+    const onLeft = () => this.openSettings();
+    this.input.keyboard?.on("keydown-LEFT", onLeft);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      setChromeActions({ confirm: false, shuffle: false, zoom: false, back: false });
+      this.input.keyboard?.off("keydown-LEFT", onLeft);
+      setChromeActions({
+        confirm: false,
+        shuffle: false,
+        zoom: false,
+        back: false,
+        navigate: false,
+      });
     });
 
     if (this.registry.get(MENU_INTRO_SEEN_KEY)) {
@@ -82,7 +98,13 @@ export class MenuScene extends Phaser.Scene {
       delay: SCROLL_REVEAL_DELAY_MS,
       onComplete: () => {
         this.canAdvance = true;
-        setChromeActions({ confirm: true, shuffle: false, zoom: false, back: false });
+        setChromeActions({
+          confirm: true,
+          shuffle: false,
+          zoom: false,
+          back: false,
+          navigate: false,
+        });
         this.showCurrentLine();
         this.oscillationStart = this.time.now;
       },
@@ -142,6 +164,15 @@ export class MenuScene extends Phaser.Scene {
     this.enterMenu();
   }
 
+  private openSettings(): void {
+    if (this.mode !== "menu") {
+      return;
+    }
+
+    this.soundManager().playSfx("sfx-a-but", { volume: 0.5 });
+    this.scene.start("SettingsScene");
+  }
+
   private enterMenu(): void {
     this.textBox?.destroy();
     this.textBox = undefined;
@@ -156,7 +187,13 @@ export class MenuScene extends Phaser.Scene {
   private showMenuOptions(): void {
     this.mode = "menu";
     this.canAdvance = true;
-    setChromeActions({ confirm: true, shuffle: false, zoom: false, back: false });
+    setChromeActions({
+      confirm: true,
+      shuffle: false,
+      zoom: false,
+      back: true,
+      navigate: false,
+    });
 
     const settingsLabel = addGameText(this, 65, 220, "menu", {
       fontSize: 20,
