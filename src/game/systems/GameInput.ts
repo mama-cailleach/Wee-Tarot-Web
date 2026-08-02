@@ -2,30 +2,73 @@ import Phaser from "phaser";
 
 export const INPUT_CONFIRM = "input:confirm";
 export const INPUT_AUTO_SHUFFLE = "input:autoShuffle";
+export const INPUT_ZOOM = "input:zoom";
+export const INPUT_BACK = "input:back";
 
 export type ChromeActions = {
   confirm: boolean;
   shuffle: boolean;
+  zoom: boolean;
+  back: boolean;
 };
 
 function chromeButtons(): {
   confirm: HTMLButtonElement | null;
-  shuffle: HTMLButtonElement | null;
+  middle: HTMLButtonElement | null;
+  back: HTMLButtonElement | null;
 } {
   return {
-    confirm: document.getElementById("btn-a") as HTMLButtonElement | null,
-    shuffle: document.getElementById("btn-shuffle") as HTMLButtonElement | null,
+    confirm: document.getElementById("btn-confirm") as HTMLButtonElement | null,
+    middle: document.getElementById("btn-middle") as HTMLButtonElement | null,
+    back: document.getElementById("btn-back") as HTMLButtonElement | null,
   };
+}
+
+type MiddleMode = "none" | "shuffle" | "zoom";
+
+let middleMode: MiddleMode = "none";
+
+function applyMiddleMode(mode: MiddleMode): void {
+  middleMode = mode;
+  const middle = chromeButtons().middle;
+  if (!middle) {
+    return;
+  }
+
+  if (mode === "shuffle") {
+    middle.textContent = "Shuffle";
+    middle.disabled = false;
+  } else if (mode === "zoom") {
+    middle.textContent = "Zoom";
+    middle.disabled = false;
+  } else {
+    middle.disabled = true;
+  }
 }
 
 /** Enable/disable the HTML chrome buttons under the game frame. */
 export function setChromeActions(actions: Partial<ChromeActions>): void {
   const buttons = chromeButtons();
+
   if (actions.confirm !== undefined && buttons.confirm) {
     buttons.confirm.disabled = !actions.confirm;
   }
-  if (actions.shuffle !== undefined && buttons.shuffle) {
-    buttons.shuffle.disabled = !actions.shuffle;
+
+  if (actions.back !== undefined && buttons.back) {
+    buttons.back.disabled = !actions.back;
+  }
+
+  const nextShuffle = actions.shuffle ?? false;
+  const nextZoom = actions.zoom ?? false;
+
+  if (actions.shuffle !== undefined || actions.zoom !== undefined) {
+    if (nextZoom) {
+      applyMiddleMode("zoom");
+    } else if (nextShuffle) {
+      applyMiddleMode("shuffle");
+    } else {
+      applyMiddleMode("none");
+    }
   }
 }
 
@@ -37,6 +80,14 @@ export function emitAutoShuffle(game: Phaser.Game): void {
   game.events.emit(INPUT_AUTO_SHUFFLE);
 }
 
+export function emitZoom(game: Phaser.Game): void {
+  game.events.emit(INPUT_ZOOM);
+}
+
+export function emitBack(game: Phaser.Game): void {
+  game.events.emit(INPUT_BACK);
+}
+
 function refocusCanvas(game: Phaser.Game): void {
   const canvas = game.canvas;
   if (canvas && typeof canvas.focus === "function") {
@@ -46,7 +97,7 @@ function refocusCanvas(game: Phaser.Game): void {
 }
 
 /**
- * Wire HTML A / Shuffle buttons to the shared input bus. Call once after the
+ * Wire HTML chrome buttons to the shared input bus. Call once after the
  * Phaser game is created.
  */
 export function bindChromeControls(game: Phaser.Game): void {
@@ -70,14 +121,21 @@ export function bindChromeControls(game: Phaser.Game): void {
   };
 
   bindPress(buttons.confirm, () => emitConfirm(game));
-  bindPress(buttons.shuffle, () => emitAutoShuffle(game));
+  bindPress(buttons.back, () => emitBack(game));
+  bindPress(buttons.middle, () => {
+    if (middleMode === "shuffle") {
+      emitAutoShuffle(game);
+    } else if (middleMode === "zoom") {
+      emitZoom(game);
+    }
+  });
 
-  setChromeActions({ confirm: false, shuffle: false });
+  setChromeActions({ confirm: false, shuffle: false, zoom: false, back: false });
 }
 
 /**
  * Register a confirm handler for the active scene. Keyboard (Space/Enter),
- * canvas tap, and the HTML A button all route through the same bus event.
+ * canvas tap, and the HTML > button all route through the same bus event.
  * Cleaned up automatically on scene shutdown.
  */
 export function bindConfirm(scene: Phaser.Scene, handler: () => void): void {
@@ -100,7 +158,7 @@ export function bindConfirm(scene: Phaser.Scene, handler: () => void): void {
 }
 
 /**
- * Register an auto-shuffle handler for the active scene (HTML Shuffle button).
+ * Register an auto-shuffle handler for the active scene (middle Shuffle button).
  * Cleaned up automatically on scene shutdown.
  */
 export function bindAutoShuffle(scene: Phaser.Scene, handler: () => void): void {
@@ -111,5 +169,35 @@ export function bindAutoShuffle(scene: Phaser.Scene, handler: () => void): void 
 
   scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
     game.events.off(INPUT_AUTO_SHUFFLE, onBus);
+  });
+}
+
+/**
+ * Register a zoom-toggle handler for the active scene (middle Zoom button).
+ * Cleaned up automatically on scene shutdown.
+ */
+export function bindZoom(scene: Phaser.Scene, handler: () => void): void {
+  const game = scene.game;
+  const onBus = () => handler();
+
+  game.events.on(INPUT_ZOOM, onBus);
+
+  scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+    game.events.off(INPUT_ZOOM, onBus);
+  });
+}
+
+/**
+ * Register a back handler for the active scene (HTML < button).
+ * Cleaned up automatically on scene shutdown.
+ */
+export function bindBack(scene: Phaser.Scene, handler: () => void): void {
+  const game = scene.game;
+  const onBus = () => handler();
+
+  game.events.on(INPUT_BACK, onBus);
+
+  scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+    game.events.off(INPUT_BACK, onBus);
   });
 }

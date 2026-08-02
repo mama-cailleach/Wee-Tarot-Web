@@ -13,14 +13,13 @@ const INTRO_OPTIONS = [
 ];
 
 const LAST_LINE_OPTIONS = [
-  "You can press *A* or *B* now darling, but I will not tell you what to do.",
-  "*B* will show you what was. *A* moves you forward. Ghosts hate being summoned twice.",
-  "Take a final peek with *B*.\nOr press *A* and let fate close the door.",
-  "*B* reveals. *A* releases. You only haunt the past if you stay too long.",
-  "One more look with *B*? To move on? *A* knows the way. The card will not follow.",
-  "If your heart clings, press *B*. If it dares, *A*. The card forgets you soon.",
-  "Press *B* for one last look. Press *A* to move on. The past doesn't wait, dearie.",
-  "One last glance? Press *B*. Ready to let go? Press *A*. The veil doesn't open twice.",
+  "You can press *>* or *<* now darling, but I will not tell you what to do.",
+  "*<* will show you what was. *>* moves you forward. Ghosts hate being summoned twice.",
+  "Take a final peek with *<* \nOr press *>* and let fate close the door.",
+  "One more look with *<*? To move on? *>* knows the way. The card will not follow.",
+  "If your heart clings, press *<* If it dares, *>* The card forgets you soon.",
+  "Press *<* for one last look. Press *>* to move on. The past doesn't wait, dearie.",
+  "One last glance? Press *<* Ready to let go? Press *>* The veil doesn't open twice.",
 ];
 
 export function buildLines(

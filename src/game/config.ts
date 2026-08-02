@@ -38,9 +38,10 @@ export const SLICE_ASSETS = {
     shuffle: assetUrl("images", "shuffleAnimation", "1_card_shuffle-table-400-240.png"),
     cardSpinSlide: assetUrl("images", "shuffleAnimation", "card_spin_slide-table-400-240.png"),
     deckLaying: assetUrl("images", "shuffleAnimation", "deck_laying_full_lower-table-400-240.png"),
+    explodeDeck: assetUrl("images", "shuffleAnimation", "exploding_deck1-table-400-240.png"),
+    scaledCard: assetUrl("images", "shuffleAnimation", "scaled_card-table-400-240.png"),
     explodeFinale: assetUrl("images", "shuffleAnimation", "explode_finale-table-400-240.png"),
     reveal: assetUrl("images", "shuffleAnimation", "reveal-table-236-342.png"),
-    iconTri: assetUrl("images", "bg", "icon_tri_smol.png"),
   },
   audio: {
     cardsSlow: assetUrl("sound", "cards2_slow.wav"),

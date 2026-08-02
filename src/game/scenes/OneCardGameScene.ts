@@ -1,19 +1,24 @@
 import Phaser from "phaser";
 import { getCardImageUrl } from "../config";
 import type { ReadingResult } from "../data/types";
-import { AutoShuffleDriver, ShuffleInput } from "../systems/ShuffleInput";
 import { Deck } from "../systems/Deck";
-import { bindAutoShuffle, setChromeActions } from "../systems/GameInput";
+import { bindAutoShuffle, bindZoom, setChromeActions } from "../systems/GameInput";
 import { SoundManager } from "../systems/SoundManager";
-import { addGameText, createWrappedText, initSceneCamera, onConfirm, playSpritesheetOnce, type UiText } from "../systems/phaserUtils";
+import {
+  addGameText,
+  initSceneCamera,
+  onConfirm,
+  playSpritesheetOnce,
+  type UiText,
+} from "../systems/phaserUtils";
 
 type GameState = "intro" | "shuffle" | "revealing" | "fortune" | "revealed";
 
 const FIRST_PROMPTS = [
-  "Set your intentions, let the cards\nhear your silent whispers.",
-  "Let your energy flow... \nand the answers will find you.",
-  "Clear your mind, focus your heart,\nand allow the truth to unfold.",
-  "Shuffle with purpose. Your\nquestion shapes the path ahead.",
+  "Set your intentions, let the cards hear your silent whispers.",
+  "Let your energy flow... and the answers will find you.",
+  "Clear your mind, focus your heart, and allow the truth to unfold.",
+  "Shuffle with purpose. Your question shapes the path ahead.",
 ];
 
 export class OneCardGameScene extends Phaser.Scene {
@@ -21,18 +26,13 @@ export class OneCardGameScene extends Phaser.Scene {
   private deck = new Deck();
   private bgImage?: Phaser.GameObjects.Image;
   private shuffleSprite?: Phaser.GameObjects.Sprite;
-  private spinSlideSprite?: Phaser.GameObjects.Sprite;
+  private fxSprite?: Phaser.GameObjects.Sprite;
   private placementSprite?: Phaser.GameObjects.Image;
   private cardSprite?: Phaser.GameObjects.Image;
   private promptText?: UiText;
-  private shuffleInput?: ShuffleInput;
-  private autoDriver?: AutoShuffleDriver;
-
-  private shuffleFrame = 1;
-  private shuffleFrameCount = 60;
-  private shuffleSpinCount = 0;
-  private spinSlideTriggerSpinCount = Phaser.Math.Between(5, 8);
-  private spinSlideTriggered = false;
+  private shuffleStarted = false;
+  private cardZoomed = false;
+  private zoomToggleBusy = false;
 
   private drawResult?: ReadingResult;
   private inverted = false;
@@ -61,14 +61,14 @@ export class OneCardGameScene extends Phaser.Scene {
     this.bgImage = this.add.image(200, 120, "playspace").setDepth(0);
 
     this.state = "intro";
-    this.shuffleFrame = 1;
-    this.shuffleSpinCount = 0;
-    this.spinSlideTriggered = false;
-    this.spinSlideTriggerSpinCount = Phaser.Math.Between(5, 8);
+    this.shuffleStarted = false;
+    this.cardZoomed = false;
+    this.zoomToggleBusy = false;
 
-    setChromeActions({ confirm: false, shuffle: false });
+    setChromeActions({ confirm: false, shuffle: false, zoom: false, back: false });
     onConfirm(this, () => this.tryOpenReading());
-    bindAutoShuffle(this, () => this.startAutoShuffle());
+    bindAutoShuffle(this, () => this.startShuffleSequence());
+    bindZoom(this, () => this.toggleCardZoom());
 
     this.startDeckLayingIntro();
   }
@@ -78,7 +78,7 @@ export class OneCardGameScene extends Phaser.Scene {
   }
 
   private startDeckLayingIntro(): void {
-    const sprite = this.add.sprite(205, 120, "deck-laying", 0).setDepth(2);
+    const sprite = this.add.sprite(200, 120, "deck-laying", 0).setDepth(2);
     this.soundManager().playSfx("sfx-cards-slow", { volume: 1 });
 
     playSpritesheetOnce(sprite, "deck-laying-play", 30, () => {
@@ -89,39 +89,25 @@ export class OneCardGameScene extends Phaser.Scene {
 
   private enterShuffle(): void {
     this.state = "shuffle";
-    // Background stays as the tarot playspace during shuffle; darkcloth only
-    // appears at the reveal/placement step.
+    this.shuffleStarted = false;
 
-    this.shuffleSprite = this.add.sprite(200, 120, "shuffle", 0).setDepth(3);
-    // Phaser includes the __BASE full-sheet frame in frameTotal; subtract it.
-    this.shuffleFrameCount = Math.max(1, this.shuffleSprite.texture.frameTotal - 1);
-    this.shuffleFrame = 1;
+    this.shuffleSprite = this.add
+      .sprite(207, 130, "shuffle", 0)
+      .setDepth(3)
+      .setInteractive({ useHandCursor: true });
+
+    this.shuffleSprite.on("pointerdown", () => this.startShuffleSequence());
 
     this.showPrompt(FIRST_PROMPTS[Math.floor(Math.random() * FIRST_PROMPTS.length)]);
-
-    this.shuffleInput = new ShuffleInput(this, {
-      centerX: 220,
-      centerY: 135,
-      radius: 70,
-      onFrameAdvance: (steps) => this.advanceShuffleFrames(steps),
-    });
-    this.shuffleInput.setDepth(20);
-
-    this.autoDriver = new AutoShuffleDriver(
-      this,
-      (steps) => this.advanceShuffleFrames(steps),
-      () => this.spinSlideTriggered,
-    );
-
-    setChromeActions({ confirm: false, shuffle: true });
+    setChromeActions({ confirm: false, shuffle: true, zoom: false, back: false });
   }
 
   private showPrompt(text: string): void {
     this.promptText?.destroy();
-    this.promptText = addGameText(this, 20, 20, text, {
+    this.promptText = addGameText(this, 10, 0, text, {
       fontSize: 20,
       align: "left",
-      wordWrap: { width: 360 },
+      wordWrap: { width: 380 },
     }).setOrigin(0, 0);
   }
 
@@ -130,73 +116,41 @@ export class OneCardGameScene extends Phaser.Scene {
     this.promptText = undefined;
   }
 
-  private startAutoShuffle(): void {
-    if (this.state !== "shuffle" || this.spinSlideTriggered) {
-      return;
-    }
-    this.soundManager().startCrankLoop();
-    this.autoDriver?.start();
-  }
-
-  private advanceShuffleFrames(frameAdvance: number): void {
-    if (!this.shuffleSprite || this.spinSlideTriggered || this.state !== "shuffle") {
+  private startShuffleSequence(): void {
+    if (this.state !== "shuffle" || this.shuffleStarted || !this.shuffleSprite) {
       return;
     }
 
-    const steps = Math.abs(frameAdvance);
-    if (steps === 0) {
-      return;
-    }
-
-    const direction = frameAdvance > 0 ? 1 : -1;
-    this.soundManager().startCrankLoop();
-
-    for (let i = 0; i < steps; i += 1) {
-      let nextFrame = this.shuffleFrame + direction;
-
-      if (nextFrame > this.shuffleFrameCount) {
-        nextFrame = 1;
-        this.shuffleSpinCount += 1;
-      } else if (nextFrame < 1) {
-        nextFrame = this.shuffleFrameCount;
-      }
-
-      this.shuffleFrame = nextFrame;
-      this.shuffleSprite.setFrame(this.shuffleFrame - 1);
-
-      if (
-        direction > 0 &&
-        this.shuffleSpinCount >= this.spinSlideTriggerSpinCount &&
-        this.shuffleFrame === 1
-      ) {
-        this.triggerSpinSlide();
-        return;
-      }
-    }
-  }
-
-  private triggerSpinSlide(): void {
-    if (this.spinSlideTriggered || this.state !== "shuffle") {
-      return;
-    }
-
-    this.spinSlideTriggered = true;
-    this.state = "revealing";
-    this.autoDriver?.stop();
-    this.soundManager().stopCrankLoop();
+    this.shuffleStarted = true;
+    setChromeActions({ confirm: false, shuffle: false, zoom: false, back: false });
+    this.shuffleSprite.disableInteractive();
     this.clearPrompt();
-    this.shuffleInput?.setVisible(false);
-    setChromeActions({ confirm: false, shuffle: false });
 
-    this.shuffleSprite?.destroy();
-    this.shuffleSprite = undefined;
+    const loops = Phaser.Math.Between(3, 6);
+    this.soundManager().startCrankLoop();
 
-    this.spinSlideSprite = this.add.sprite(205, 150, "spin-slide", 0).setDepth(3);
+    playSpritesheetOnce(
+      this.shuffleSprite,
+      "shuffle-play",
+      30,
+      () => {
+        this.soundManager().stopCrankLoop();
+        this.shuffleSprite?.destroy();
+        this.shuffleSprite = undefined;
+        this.playExplodeDeck();
+      },
+      loops - 1,
+    );
+  }
+
+  private playExplodeDeck(): void {
+    this.state = "revealing";
+    this.fxSprite = this.add.sprite(194, 122, "explode-deck", 0).setDepth(3);
     this.soundManager().playSfx("sfx-cards-fast", { volume: 1 });
 
-    playSpritesheetOnce(this.spinSlideSprite, "spin-slide-play", 30, () => {
-      this.spinSlideSprite?.destroy();
-      this.spinSlideSprite = undefined;
+    playSpritesheetOnce(this.fxSprite, "explode-deck-play", 30, () => {
+      this.fxSprite?.destroy();
+      this.fxSprite = undefined;
       this.showPlacementAndDraw();
     });
   }
@@ -216,6 +170,15 @@ export class OneCardGameScene extends Phaser.Scene {
       duration: 300,
       onComplete: () => this.drawSingleCard(),
     });
+    this.soundManager().playSfx("sfx-tuin", { volume: 0.5 });
+  }
+
+  private cardTextureKey(zoomed: boolean): string {
+    if (!this.drawResult) {
+      return "";
+    }
+    const base = `card-${this.drawResult.cardSuit}-${this.drawResult.cardNumber}`;
+    return zoomed ? `${base}-zoom` : base;
   }
 
   private drawSingleCard(): void {
@@ -231,8 +194,9 @@ export class OneCardGameScene extends Phaser.Scene {
       cardSuit: result.cardSuit,
       inverted: this.inverted,
     };
+    this.cardZoomed = false;
 
-    const cardKey = `card-${result.cardSuit}-${result.cardNumber}`;
+    const cardKey = this.cardTextureKey(false);
     const cardUrl = getCardImageUrl(result.cardNumber, result.cardSuit, false);
 
     if (!this.textures.exists(cardKey)) {
@@ -263,15 +227,46 @@ export class OneCardGameScene extends Phaser.Scene {
 
     this.time.delayedCall(500, () => {
       this.state = "revealed";
-      setChromeActions({ confirm: true, shuffle: false });
-      this.showRevealPrompt();
+      setChromeActions({ confirm: true, shuffle: false, zoom: true, back: false });
     });
   }
 
-  private showRevealPrompt(): void {
-    createWrappedText(this, 200, 210, "Tap to read your fortune", 360, {
-      fontSize: 12,
-    }).setDepth(10);
+  private toggleCardZoom(): void {
+    if (
+      (this.state !== "revealed" && this.state !== "fortune") ||
+      !this.drawResult ||
+      !this.cardSprite ||
+      this.zoomToggleBusy
+    ) {
+      return;
+    }
+
+    const nextZoomed = !this.cardZoomed;
+    const textureKey = this.cardTextureKey(nextZoomed);
+
+    const apply = (): void => {
+      this.cardSprite?.setTexture(textureKey);
+      if (this.inverted) {
+        this.cardSprite?.setAngle(180);
+      }
+      this.cardZoomed = nextZoomed;
+      this.zoomToggleBusy = false;
+    };
+
+    if (this.textures.exists(textureKey)) {
+      apply();
+      return;
+    }
+
+    this.zoomToggleBusy = true;
+    const url = getCardImageUrl(
+      this.drawResult.cardNumber,
+      this.drawResult.cardSuit,
+      nextZoomed,
+    );
+    this.load.image(textureKey, url);
+    this.load.once(Phaser.Loader.Events.COMPLETE, () => apply());
+    this.load.start();
   }
 
   private tryOpenReading(): void {
@@ -283,9 +278,7 @@ export class OneCardGameScene extends Phaser.Scene {
   }
 
   shutdown(): void {
-    this.autoDriver?.stop();
-    this.shuffleInput?.destroy();
     this.soundManager().stopCrankLoop();
-    setChromeActions({ confirm: false, shuffle: false });
+    setChromeActions({ confirm: false, shuffle: false, zoom: false, back: false });
   }
 }

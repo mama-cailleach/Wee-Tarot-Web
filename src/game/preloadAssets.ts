@@ -23,11 +23,12 @@ export function preloadSliceAssets(scene: Phaser.Scene): void {
   sheet(scene, "dinah-bg", SLICE_ASSETS.images.dinahBg);
   scene.load.image("placement-diamond", SLICE_ASSETS.images.placementDiamond);
   scene.load.image("scroll-box", SLICE_ASSETS.images.scrollBox);
-  scene.load.image("icon-tri", SLICE_ASSETS.images.iconTri);
 
   sheet(scene, "shuffle", SLICE_ASSETS.images.shuffle);
   sheet(scene, "spin-slide", SLICE_ASSETS.images.cardSpinSlide);
   sheet(scene, "deck-laying", SLICE_ASSETS.images.deckLaying);
+  sheet(scene, "explode-deck", SLICE_ASSETS.images.explodeDeck);
+  sheet(scene, "scaled-card", SLICE_ASSETS.images.scaledCard);
   sheet(scene, "explode-finale", SLICE_ASSETS.images.explodeFinale);
   sheet(scene, "reveal", SLICE_ASSETS.images.reveal);
 

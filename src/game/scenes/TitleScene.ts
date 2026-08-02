@@ -58,10 +58,10 @@ export class TitleScene extends Phaser.Scene {
       fontSize: 20,
     });
 
-    setChromeActions({ confirm: true, shuffle: false });
+    setChromeActions({ confirm: true, shuffle: false, zoom: false, back: false });
     onConfirm(this, () => this.begin());
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      setChromeActions({ confirm: false, shuffle: false });
+      setChromeActions({ confirm: false, shuffle: false, zoom: false, back: false });
     });
 
     if (this.input.keyboard) {
@@ -104,7 +104,7 @@ export class TitleScene extends Phaser.Scene {
 
     const sound = this.registry.get("sound") as SoundManager;
     sound.unlock();
-    sound.playSfx("sfx-cards-fast", { volume: 0.45 });
+    sound.playSfx("sfx-tuin", { volume: 0.5 });
 
     if (this.titleSprite && this.anims.exists(TITLE_ANIM_KEY)) {
       this.titleSprite.play(TITLE_ANIM_KEY);

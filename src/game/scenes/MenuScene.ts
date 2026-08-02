@@ -15,7 +15,6 @@ const DINAH_IDLE_FRAME_RATE = 8;
 
 const TEXT_BASE_Y = 182;
 const SCROLL_BASE_Y = 170;
-const ICON_BASE_Y = 220;
 const OSC_AMPLITUDE = 3.7;
 const OSC_SPEED = 2.5;
 const SCROLL_REVEAL_DELAY_MS = 3200;
@@ -41,7 +40,6 @@ export class MenuScene extends Phaser.Scene {
   private lineIndex = 0;
   private textBox?: UiText;
   private scrollSprite?: Phaser.GameObjects.Image;
-  private iconSprite?: Phaser.GameObjects.Image;
   private dinahSprite?: Phaser.GameObjects.Sprite;
   private canAdvance = false;
   private oscillationStart?: number;
@@ -61,10 +59,10 @@ export class MenuScene extends Phaser.Scene {
 
     this.setupDinah();
 
-    setChromeActions({ confirm: false, shuffle: false });
+    setChromeActions({ confirm: false, shuffle: false, zoom: false, back: false });
     onConfirm(this, () => this.handleConfirm());
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      setChromeActions({ confirm: false, shuffle: false });
+      setChromeActions({ confirm: false, shuffle: false, zoom: false, back: false });
     });
 
     if (this.registry.get(MENU_INTRO_SEEN_KEY)) {
@@ -84,9 +82,8 @@ export class MenuScene extends Phaser.Scene {
       delay: SCROLL_REVEAL_DELAY_MS,
       onComplete: () => {
         this.canAdvance = true;
-        setChromeActions({ confirm: true, shuffle: false });
+        setChromeActions({ confirm: true, shuffle: false, zoom: false, back: false });
         this.showCurrentLine();
-        this.showAdvanceHint();
         this.oscillationStart = this.time.now;
       },
     });
@@ -125,10 +122,6 @@ export class MenuScene extends Phaser.Scene {
     });
   }
 
-  private showAdvanceHint(): void {
-    this.iconSprite = this.add.image(360, ICON_BASE_Y, "icon-tri").setDepth(4).setScale(1.2);
-  }
-
   private handleConfirm(): void {
     if (this.mode === "menu") {
       this.soundManager().playSfx("sfx-a-but", { volume: 0.5 });
@@ -154,8 +147,6 @@ export class MenuScene extends Phaser.Scene {
     this.textBox = undefined;
     this.scrollSprite?.destroy();
     this.scrollSprite = undefined;
-    this.iconSprite?.destroy();
-    this.iconSprite = undefined;
     this.oscillationStart = undefined;
 
     this.registry.set(MENU_INTRO_SEEN_KEY, true);
@@ -165,7 +156,7 @@ export class MenuScene extends Phaser.Scene {
   private showMenuOptions(): void {
     this.mode = "menu";
     this.canAdvance = true;
-    setChromeActions({ confirm: true, shuffle: false });
+    setChromeActions({ confirm: true, shuffle: false, zoom: false, back: false });
 
     const settingsLabel = addGameText(this, 65, 220, "menu", {
       fontSize: 20,
@@ -178,8 +169,8 @@ export class MenuScene extends Phaser.Scene {
       }).setOrigin(0.5, 0.5);
       this.menuObjects.push(readingLabel);
 
-      this.menuObjects.push(this.makeMenuButton("M", 16, 223, 14));
-      this.menuObjects.push(this.makeMenuButton("R", 384, 223, 14));
+      this.menuObjects.push(this.makeMenuButton("<", 16, 223, 14));
+      this.menuObjects.push(this.makeMenuButton(">", 384, 223, 14));
     });
   }
 
@@ -188,7 +179,7 @@ export class MenuScene extends Phaser.Scene {
 
     const circle = this.add.circle(0, 0, radius, 0xa9a9a9).setStrokeStyle(2, 0x323027);
     const label = addGameText(this, 0, 0, letter, {
-      fontSize: 16,
+      fontSize: 20,
       color: "#323027",
       align: "center",
     }).setOrigin(0.5, 0.5);
@@ -207,6 +198,5 @@ export class MenuScene extends Phaser.Scene {
 
     this.textBox?.setY(TEXT_BASE_Y + offset);
     this.scrollSprite?.setY(SCROLL_BASE_Y + offset);
-    this.iconSprite?.setY(ICON_BASE_Y + offset);
   }
 }

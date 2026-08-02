@@ -17,10 +17,10 @@ export class LaunchScene extends Phaser.Scene {
 
     this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, "launch");
 
-    setChromeActions({ confirm: true, shuffle: false });
+    setChromeActions({ confirm: true, shuffle: false, zoom: false, back: false });
     onConfirm(this, () => this.proceed());
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      setChromeActions({ confirm: false, shuffle: false });
+      setChromeActions({ confirm: false, shuffle: false, zoom: false, back: false });
     });
   }
 

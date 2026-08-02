@@ -105,6 +105,7 @@ export function playSpritesheetOnce(
   animKey: string,
   frameRate = 30,
   onComplete?: () => void,
+  repeat = 0,
 ): void {
   if (!sprite.scene.anims.exists(animKey)) {
     sprite.scene.anims.create({
@@ -118,7 +119,7 @@ export function playSpritesheetOnce(
   sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
     onComplete?.();
   });
-  sprite.play(animKey);
+  sprite.play({ key: animKey, frameRate, repeat });
 }
 
 export function createWrappedText(
