@@ -1,6 +1,7 @@
 import Phaser from "phaser";
+import { setChromeActions } from "../systems/GameInput";
 import type { SoundManager } from "../systems/SoundManager";
-import { createWrappedText, initSceneCamera, type UiText } from "../systems/phaserUtils";
+import { createWrappedText, initSceneCamera, onConfirm, type UiText } from "../systems/phaserUtils";
 
 const TITLE_ANIM_KEY = "title-intro";
 const TITLE_ANIM_FRAMES = 34;
@@ -57,9 +58,11 @@ export class TitleScene extends Phaser.Scene {
       fontSize: 20,
     });
 
-    this.input.keyboard?.on("keydown-SPACE", () => this.begin());
-    this.input.keyboard?.on("keydown-ENTER", () => this.begin());
-    this.input.on("pointerdown", () => this.begin());
+    setChromeActions({ confirm: true, shuffle: false });
+    onConfirm(this, () => this.begin());
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      setChromeActions({ confirm: false, shuffle: false });
+    });
 
     if (this.input.keyboard) {
       this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);

@@ -20,15 +20,27 @@
         height: 100%;
         overflow: hidden;
         background: #000;
+        touch-action: none;
       }
 
-      /* Full-viewport centering box. Also the size reference for integer zoom. */
-      #game {
+      /* Full-viewport centering shell. Also the size reference for integer zoom. */
+      #app {
         width: 100%;
         height: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
+      }
+
+      #stage {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+      }
+
+      #game {
+        line-height: 0;
       }
 
       #game canvas {
@@ -38,10 +50,62 @@
            thickness and does not affect canvas sizing/scaling. */
         box-shadow: 0 0 0 4px #f2c744;
       }
+
+      #chrome {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        min-height: 56px;
+        user-select: none;
+        -webkit-user-select: none;
+      }
+
+      #chrome button {
+        appearance: none;
+        border: 2px solid #f2c744;
+        background: #1a1a1a;
+        color: #f2c744;
+        font-family: "Courier New", Courier, monospace;
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        min-width: 88px;
+        height: 44px;
+        padding: 0 18px;
+        border-radius: 999px;
+        cursor: pointer;
+        touch-action: manipulation;
+      }
+
+      #chrome button:disabled {
+        opacity: 0.35;
+        cursor: default;
+      }
+
+      #chrome button:not(:disabled):active {
+        background: #f2c744;
+        color: #1a1a1a;
+      }
+
+      #btn-a {
+        min-width: 56px;
+        width: 56px;
+        padding: 0;
+        border-radius: 50%;
+      }
     </style>
   </head>
   <body>
-    <div id="game"></div>
+    <div id="app">
+      <div id="stage">
+        <div id="game"></div>
+        <div id="chrome" aria-label="Game controls">
+          <button type="button" id="btn-shuffle" disabled>Shuffle</button>
+          <button type="button" id="btn-a" disabled aria-label="A button">A</button>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

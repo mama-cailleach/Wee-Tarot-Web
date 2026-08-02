@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import { buildLines } from "../data/oneCardReadingText";
 import type { ReadingResult } from "../data/types";
+import { setChromeActions } from "../systems/GameInput";
 import type { SoundManager } from "../systems/SoundManager";
 import { createWrappedText, initSceneCamera, onConfirm, type UiText } from "../systems/phaserUtils";
 
@@ -74,6 +75,12 @@ export class OneCardPostScene extends Phaser.Scene {
 
     this.scrollSprite = this.add.image(202, 300, "scroll-box").setDepth(2).setAlpha(0);
 
+    setChromeActions({ confirm: false, shuffle: false });
+    onConfirm(this, () => this.advance());
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      setChromeActions({ confirm: false, shuffle: false });
+    });
+
     this.tweens.add({
       targets: this.scrollSprite,
       y: SCROLL_BASE_Y,
@@ -83,13 +90,12 @@ export class OneCardPostScene extends Phaser.Scene {
       delay: SCROLL_REVEAL_DELAY_MS,
       onComplete: () => {
         this.canAdvance = true;
+        setChromeActions({ confirm: true, shuffle: false });
         this.showCurrentLine();
         this.showAdvanceHint();
         this.oscillationStart = this.time.now;
       },
     });
-
-    onConfirm(this, () => this.advance());
   }
 
   private soundManager(): SoundManager {

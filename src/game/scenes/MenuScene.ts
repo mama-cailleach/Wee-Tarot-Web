@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { setChromeActions } from "../systems/GameInput";
 import type { SoundManager } from "../systems/SoundManager";
 import {
   addGameText,
@@ -60,7 +61,11 @@ export class MenuScene extends Phaser.Scene {
 
     this.setupDinah();
 
+    setChromeActions({ confirm: false, shuffle: false });
     onConfirm(this, () => this.handleConfirm());
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      setChromeActions({ confirm: false, shuffle: false });
+    });
 
     if (this.registry.get(MENU_INTRO_SEEN_KEY)) {
       this.showMenuOptions();
@@ -79,6 +84,7 @@ export class MenuScene extends Phaser.Scene {
       delay: SCROLL_REVEAL_DELAY_MS,
       onComplete: () => {
         this.canAdvance = true;
+        setChromeActions({ confirm: true, shuffle: false });
         this.showCurrentLine();
         this.showAdvanceHint();
         this.oscillationStart = this.time.now;
@@ -159,6 +165,7 @@ export class MenuScene extends Phaser.Scene {
   private showMenuOptions(): void {
     this.mode = "menu";
     this.canAdvance = true;
+    setChromeActions({ confirm: true, shuffle: false });
 
     const settingsLabel = addGameText(this, 65, 220, "menu", {
       fontSize: 20,

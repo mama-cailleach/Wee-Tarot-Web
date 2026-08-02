@@ -8,6 +8,7 @@
     "build": "npm run export:data && tsc --noEmit && vite build",
     "preview": "vite preview",
     "build:font": "tsx scripts/build-tarotheque-font.ts",
+    "repack:sheets": "tsx scripts/repack-spritesheets.ts",
     "export:data": "tsx scripts/export-content.ts",
     "export:data:ps": "powershell -ExecutionPolicy Bypass -File scripts/export-content.ps1",
     "test": "vitest run",

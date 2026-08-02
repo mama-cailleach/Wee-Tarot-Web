@@ -3,6 +3,7 @@ import { getCardImageUrl } from "../config";
 import type { ReadingResult } from "../data/types";
 import { AutoShuffleDriver, ShuffleInput } from "../systems/ShuffleInput";
 import { Deck } from "../systems/Deck";
+import { bindAutoShuffle, setChromeActions } from "../systems/GameInput";
 import { SoundManager } from "../systems/SoundManager";
 import { addGameText, createWrappedText, initSceneCamera, onConfirm, playSpritesheetOnce, type UiText } from "../systems/phaserUtils";
 
@@ -65,7 +66,9 @@ export class OneCardGameScene extends Phaser.Scene {
     this.spinSlideTriggered = false;
     this.spinSlideTriggerSpinCount = Phaser.Math.Between(5, 8);
 
+    setChromeActions({ confirm: false, shuffle: false });
     onConfirm(this, () => this.tryOpenReading());
+    bindAutoShuffle(this, () => this.startAutoShuffle());
 
     this.startDeckLayingIntro();
   }
@@ -90,7 +93,8 @@ export class OneCardGameScene extends Phaser.Scene {
     // appears at the reveal/placement step.
 
     this.shuffleSprite = this.add.sprite(200, 120, "shuffle", 0).setDepth(3);
-    this.shuffleFrameCount = this.shuffleSprite.texture.frameTotal;
+    // Phaser includes the __BASE full-sheet frame in frameTotal; subtract it.
+    this.shuffleFrameCount = Math.max(1, this.shuffleSprite.texture.frameTotal - 1);
     this.shuffleFrame = 1;
 
     this.showPrompt(FIRST_PROMPTS[Math.floor(Math.random() * FIRST_PROMPTS.length)]);
@@ -100,7 +104,6 @@ export class OneCardGameScene extends Phaser.Scene {
       centerY: 135,
       radius: 70,
       onFrameAdvance: (steps) => this.advanceShuffleFrames(steps),
-      onAutoShuffle: () => this.startAutoShuffle(),
     });
     this.shuffleInput.setDepth(20);
 
@@ -109,12 +112,14 @@ export class OneCardGameScene extends Phaser.Scene {
       (steps) => this.advanceShuffleFrames(steps),
       () => this.spinSlideTriggered,
     );
+
+    setChromeActions({ confirm: false, shuffle: true });
   }
 
   private showPrompt(text: string): void {
     this.promptText?.destroy();
     this.promptText = addGameText(this, 20, 20, text, {
-      fontSize: 12,
+      fontSize: 20,
       align: "left",
       wordWrap: { width: 360 },
     }).setOrigin(0, 0);
@@ -181,6 +186,7 @@ export class OneCardGameScene extends Phaser.Scene {
     this.soundManager().stopCrankLoop();
     this.clearPrompt();
     this.shuffleInput?.setVisible(false);
+    setChromeActions({ confirm: false, shuffle: false });
 
     this.shuffleSprite?.destroy();
     this.shuffleSprite = undefined;
@@ -257,6 +263,7 @@ export class OneCardGameScene extends Phaser.Scene {
 
     this.time.delayedCall(500, () => {
       this.state = "revealed";
+      setChromeActions({ confirm: true, shuffle: false });
       this.showRevealPrompt();
     });
   }
@@ -279,5 +286,6 @@ export class OneCardGameScene extends Phaser.Scene {
     this.autoDriver?.stop();
     this.shuffleInput?.destroy();
     this.soundManager().stopCrankLoop();
+    setChromeActions({ confirm: false, shuffle: false });
   }
 }

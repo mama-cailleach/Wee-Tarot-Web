@@ -137,13 +137,8 @@ export function createWrappedText(
 }
 
 /**
- * Registers an edge-triggered "confirm" action. Space, Enter, and a mouse/touch
- * tap all fire the handler exactly once per press, so a click behaves like a
- * single Space press (no multi-advance while the button is held). Listeners are
- * bound to the scene's input and are cleaned up automatically on scene shutdown.
+ * Registers an edge-triggered "confirm" action. Space, Enter, canvas tap, and
+ * the HTML A button under the frame all fire the same shared input bus event.
+ * Cleaned up automatically on scene shutdown.
  */
-export function onConfirm(scene: Phaser.Scene, handler: () => void): void {
-  scene.input.keyboard?.on("keydown-SPACE", handler);
-  scene.input.keyboard?.on("keydown-ENTER", handler);
-  scene.input.on(Phaser.Input.Events.POINTER_DOWN, handler);
-}
+export { bindConfirm as onConfirm } from "./GameInput";
