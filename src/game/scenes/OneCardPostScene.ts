@@ -142,12 +142,12 @@ export class OneCardPostScene extends Phaser.Scene {
       return;
     }
 
-    this.soundManager().playSfx("sfx-a-but", { volume: 0.5 });
+    this.soundManager().playABut();
     this.scene.start("CardReviewScene", { reading: this.reading });
   }
 
   private finishReading(): void {
-    this.soundManager().playSfx("sfx-a-but", { volume: 0.5 });
+    this.soundManager().playABut();
     this.scene.start("MenuScene");
   }
 

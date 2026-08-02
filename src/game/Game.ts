@@ -8,6 +8,7 @@ import { MenuScene } from "./scenes/MenuScene";
 import { OneCardGameScene } from "./scenes/OneCardGameScene";
 import { OneCardPostScene } from "./scenes/OneCardPostScene";
 import { SettingsScene } from "./scenes/SettingsScene";
+import { SoundSettingsScene } from "./scenes/SoundSettingsScene";
 import { TitleScene } from "./scenes/TitleScene";
 import { bindIntegerScale } from "./scale";
 
@@ -37,6 +38,7 @@ export function createGame(parent: string | HTMLElement): Phaser.Game {
       TitleScene,
       MenuScene,
       SettingsScene,
+      SoundSettingsScene,
       HowToScene,
       OneCardPostScene,
       CardReviewScene,

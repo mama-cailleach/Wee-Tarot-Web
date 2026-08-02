@@ -38,9 +38,19 @@ export function preloadSliceAssets(scene: Phaser.Scene): void {
   scene.load.audio("sfx-cards-fast", SLICE_ASSETS.audio.cardsFast);
   scene.load.audio("sfx-crank", SLICE_ASSETS.audio.crank);
   scene.load.audio("sfx-tuin", SLICE_ASSETS.audio.tuin);
-  scene.load.audio("sfx-a-but", SLICE_ASSETS.audio.aBut);
+  scene.load.audio("sfx-a-but-1", SLICE_ASSETS.audio.aBut1);
+  scene.load.audio("sfx-a-but-2", SLICE_ASSETS.audio.aBut2);
+  scene.load.audio("sfx-a-but-3", SLICE_ASSETS.audio.aBut3);
+  scene.load.audio("sfx-a-but-4", SLICE_ASSETS.audio.aBut4);
+  scene.load.audio("sfx-a-but-5", SLICE_ASSETS.audio.aBut5);
+  scene.load.audio("sfx-a-but-6", SLICE_ASSETS.audio.aBut6);
+  scene.load.audio("sfx-a-but-7", SLICE_ASSETS.audio.aBut7);
+  scene.load.audio("sfx-a-but-8", SLICE_ASSETS.audio.aBut8);
+  scene.load.audio("sfx-a-but-9", SLICE_ASSETS.audio.aBut9);
+  scene.load.audio("sfx-a-but-10", SLICE_ASSETS.audio.aBut10);
   scene.load.audio("sfx-b-button", SLICE_ASSETS.audio.bButton);
   scene.load.audio("sfx-hahahaha", SLICE_ASSETS.audio.hahahaha);
   scene.load.audio("music-bg", SLICE_ASSETS.audio.bgMusic);
+  scene.load.audio("music-rain", SLICE_ASSETS.audio.rain);
   scene.load.audio("title-start", SLICE_ASSETS.audio.titleStart);
 }

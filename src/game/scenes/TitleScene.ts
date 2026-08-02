@@ -144,6 +144,8 @@ export class TitleScene extends Phaser.Scene {
     const sound = this.registry.get("sound") as SoundManager;
     sound.leaveTitleMusicLoop();
     console.log("[TitleScene] → MenuScene (Phaser scene.start)");
+    sound.setAmbienceVolume(0.6);
+    sound.playAmbience();
     this.scene.start("MenuScene");
   }
 }

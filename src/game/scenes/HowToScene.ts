@@ -140,7 +140,7 @@ export class HowToScene extends Phaser.Scene {
       this.soundManager().playSfx("sfx-b-button", { volume: 0.5 });
       this.soundManager().playSfx("sfx-cards-slow", { volume: 1 });
     } else {
-      this.soundManager().playSfx("sfx-a-but", { volume: 0.5 });
+      this.soundManager().playABut();
     }
     this.scene.start("SettingsScene");
   }

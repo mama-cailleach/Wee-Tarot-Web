@@ -146,7 +146,7 @@ export class MenuScene extends Phaser.Scene {
 
   private handleConfirm(): void {
     if (this.mode === "menu") {
-      this.soundManager().playSfx("sfx-a-but", { volume: 0.5 });
+      this.soundManager().playABut();
       this.scene.start("OneCardGameScene");
       return;
     }
@@ -169,7 +169,7 @@ export class MenuScene extends Phaser.Scene {
       return;
     }
 
-    this.soundManager().playSfx("sfx-a-but", { volume: 0.5 });
+    this.soundManager().playABut();
     this.scene.start("SettingsScene");
   }
 

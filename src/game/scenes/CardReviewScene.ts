@@ -3,7 +3,7 @@ import { getCardImageUrl } from "../config";
 import type { ReadingResult } from "../data/types";
 import { bindZoom, setChromeActions } from "../systems/GameInput";
 import type { SoundManager } from "../systems/SoundManager";
-import { createWrappedText, initSceneCamera, onConfirm } from "../systems/phaserUtils";
+import { initSceneCamera, onConfirm } from "../systems/phaserUtils";
 
 interface CardReviewData {
   reading: ReadingResult;
@@ -123,7 +123,7 @@ export class CardReviewScene extends Phaser.Scene {
     if (!this.canLeave) {
       return;
     }
-    this.soundManager().playSfx("sfx-a-but", { volume: 0.5 });
+    this.soundManager().playABut();
     this.scene.start("MenuScene");
   }
 }

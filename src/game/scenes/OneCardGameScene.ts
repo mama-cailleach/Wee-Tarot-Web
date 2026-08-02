@@ -274,7 +274,7 @@ export class OneCardGameScene extends Phaser.Scene {
     if (this.state !== "revealed" || !this.drawResult) {
       return;
     }
-    this.soundManager().playSfx("sfx-a-but", { volume: 0.5 });
+    this.soundManager().playABut();
     this.scene.start("OneCardPostScene", { reading: this.drawResult });
   }
 

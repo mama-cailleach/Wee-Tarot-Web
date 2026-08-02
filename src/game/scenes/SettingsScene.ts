@@ -126,7 +126,7 @@ export class SettingsScene extends Phaser.Scene {
   }
 
   private moveSelection(delta: number): void {
-    this.soundManager().playSfx("sfx-a-but", { volume: 0.5 });
+    this.soundManager().playABut();
     this.selectedIndex =
       (this.selectedIndex + delta + this.options.length) % this.options.length;
     this.updateSelectorPosition();
@@ -154,27 +154,27 @@ export class SettingsScene extends Phaser.Scene {
     }
 
     if (option.key !== "hahahaha") {
-      this.soundManager().playSfx("sfx-a-but", { volume: 0.5 });
+      this.soundManager().playABut();
     }
 
     switch (option.key) {
       case "how_to":
-        this.soundManager().playSfx("sfx-cards-slow", { volume: 1 });
+        this.soundManager().playABut();
         this.scene.start("HowToScene");
         return;
       case "sound":
-        this.soundManager().playSfx("sfx-cards-slow", { volume: 1 });
-        // Stub: SoundSettingsScene not ported yet.
+        this.soundManager().playABut();
+        this.scene.start("SoundSettingsScene");
         return;
       case "deck":
-        this.soundManager().playSfx("sfx-cards-slow", { volume: 1 });
+        this.soundManager().playABut();
         this.toggleDeckOption();
         return;
       case "hahahaha":
         this.soundManager().playSfx("sfx-hahahaha", { volume: 1 });
         return;
       case "back":
-        this.soundManager().playSfx("sfx-cards-slow", { volume: 1 });
+        this.soundManager().playSfx("sfx-b-button", { volume: 0.5 });
         this.scene.start("MenuScene");
         return;
     }
