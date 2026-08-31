@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
     />
-    <title>Wee Tarot</title>
+    <title>Wee Tarot — text wrap QA</title>
     <style>
       * {
         box-sizing: border-box;
@@ -23,7 +23,6 @@
         touch-action: none;
       }
 
-      /* Full-viewport centering shell. */
       #app {
         width: 100%;
         height: 100%;
@@ -37,7 +36,31 @@
         flex-direction: column;
         align-items: center;
         width: 400px;
-        gap: 14px;
+        gap: 10px;
+      }
+
+      #qa-banner {
+        width: 100%;
+        color: #f2c744;
+        font-family: "Courier New", Courier, monospace;
+        font-size: 12px;
+        letter-spacing: 0.04em;
+        text-align: center;
+      }
+
+      #qa-meta {
+        width: 100%;
+        min-height: 32px;
+        color: #a9aaad;
+        font-family: "Courier New", Courier, monospace;
+        font-size: 12px;
+        line-height: 1.35;
+        text-align: center;
+        word-break: break-word;
+      }
+
+      #qa-meta.is-overflow {
+        color: #ff6b6b;
       }
 
       #game {
@@ -51,18 +74,7 @@
         height: 240px !important;
         image-rendering: pixelated;
         image-rendering: crisp-edges;
-        /* Yellow frame around the screen. box-shadow spread stays a constant
-           thickness and does not affect canvas sizing/scaling. */
         box-shadow: 0 0 0 4px #f2c744;
-      }
-
-      #mute-bar {
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        width: 100%;
-        user-select: none;
-        -webkit-user-select: none;
       }
 
       #chrome {
@@ -75,8 +87,7 @@
         -webkit-user-select: none;
       }
 
-      #chrome button,
-      #btn-mute {
+      #chrome button {
         appearance: none;
         border: 2px solid #f2c744;
         background: #1a1a1a;
@@ -95,18 +106,9 @@
         cursor: default;
       }
 
-      #chrome button:not(:disabled):active,
-      #btn-mute:active {
+      #chrome button:not(:disabled):active {
         background: #f2c744;
         color: #1a1a1a;
-      }
-
-      #btn-mute {
-        min-width: 88px;
-        padding: 0 18px;
-        border-radius: 999px;
-        height: 36px;
-        font-size: 14px;
       }
 
       #btn-back {
@@ -130,23 +132,14 @@
       }
 
       #btn-back.is-hidden,
-      #btn-confirm.is-hidden {
+      #btn-confirm.is-hidden,
+      #btn-middle {
         display: none;
       }
 
-      #btn-middle,
       #chrome-nav {
         grid-column: 2;
         justify-self: center;
-      }
-
-      #btn-middle {
-        min-width: 88px;
-        padding: 0 18px;
-        border-radius: 999px;
-      }
-
-      #chrome-nav {
         display: none;
         align-items: center;
         gap: 10px;
@@ -165,30 +158,25 @@
         font-size: 18px;
         line-height: 1;
       }
-
-      #btn-middle.is-hidden {
-        display: none;
-      }
     </style>
   </head>
   <body>
     <div id="app">
       <div id="stage">
-        <div id="mute-bar">
-          <button type="button" id="btn-mute" aria-pressed="false" aria-label="Mute">Mute</button>
-        </div>
+        <div id="qa-banner">Debug only — not in the game. Next/Prev lines, Up/Down groups.</div>
         <div id="game"></div>
-        <div id="chrome" aria-label="Game controls">
-          <button type="button" id="btn-back" class="is-hidden" disabled aria-label="Back">&lt;</button>
+        <div id="qa-meta">Loading…</div>
+        <div id="chrome" aria-label="QA controls">
+          <button type="button" id="btn-back" class="is-hidden" disabled aria-label="Previous">Prev</button>
           <button type="button" id="btn-middle" class="is-hidden" disabled>Shuffle</button>
-          <div id="chrome-nav" aria-label="Navigate">
-            <button type="button" id="btn-up" disabled aria-label="Up">▲</button>
-            <button type="button" id="btn-down" disabled aria-label="Down">▼</button>
+          <div id="chrome-nav" aria-label="Jump group">
+            <button type="button" id="btn-up" disabled aria-label="Previous group">▲</button>
+            <button type="button" id="btn-down" disabled aria-label="Next group">▼</button>
           </div>
-          <button type="button" id="btn-confirm" class="is-hidden" disabled aria-label="Confirm">&gt;</button>
+          <button type="button" id="btn-confirm" class="is-hidden" disabled aria-label="Next">Next</button>
         </div>
       </div>
     </div>
-    <script type="module" src="/src/main.ts"></script>
+    <script type="module" src="/src/debug/main.ts"></script>
   </body>
 </html>

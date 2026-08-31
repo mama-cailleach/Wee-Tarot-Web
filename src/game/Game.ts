@@ -10,7 +10,7 @@ import { OneCardPostScene } from "./scenes/OneCardPostScene";
 import { SettingsScene } from "./scenes/SettingsScene";
 import { SoundSettingsScene } from "./scenes/SoundSettingsScene";
 import { TitleScene } from "./scenes/TitleScene";
-import { bindIntegerScale } from "./scale";
+import { bindNativeScale } from "./scale";
 
 export function createGame(parent: string | HTMLElement): Phaser.Game {
   const game = new Phaser.Game({
@@ -48,6 +48,6 @@ export function createGame(parent: string | HTMLElement): Phaser.Game {
     },
   });
 
-  bindIntegerScale(game);
+  bindNativeScale(game);
   return game;
 }

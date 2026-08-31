@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { bindBack, setChromeActions } from "../systems/GameInput";
+import { createDinahSprite } from "../systems/dinah";
 import type { SoundManager } from "../systems/SoundManager";
 import {
   createWrappedText,
@@ -8,17 +9,14 @@ import {
   type UiText,
 } from "../systems/phaserUtils";
 
-const DINAH_IDLE_ANIM_KEY = "dinah-idle";
-const DINAH_IDLE_FRAMES = 6;
-const DINAH_IDLE_FRAME_RATE = 8;
-
 const TEXT_BASE_Y = 182;
 const SCROLL_BASE_Y = 170;
 const OSC_AMPLITUDE = 3.7;
 const OSC_SPEED = 2.5;
+const SCROLL_REVEAL_DELAY_MS = 3200;
 
 /** Placeholder How To copy — replace when final tutorial text is ready. */
-const HOW_TO_LINES = [
+export const HOW_TO_LINES = [
   "Ah yes, curious one... I felt your energy long before you stepped in.",
   "First time? Don't fret. I'll hold the veil open for you.",
   "One card.",
@@ -44,7 +42,6 @@ export class HowToScene extends Phaser.Scene {
   private lineIndex = 0;
   private textBox?: UiText;
   private scrollSprite?: Phaser.GameObjects.Image;
-  private dinahSprite?: Phaser.GameObjects.Sprite;
   private canAdvance = false;
   private oscillationStart?: number;
 
@@ -59,23 +56,43 @@ export class HowToScene extends Phaser.Scene {
     this.canAdvance = false;
     this.oscillationStart = undefined;
 
-    this.setupDinah();
+    createDinahSprite(this);
 
-    this.scrollSprite = this.add.image(202, SCROLL_BASE_Y, "scroll-box").setDepth(2);
-    this.showCurrentLine();
-    this.canAdvance = true;
-    this.oscillationStart = this.time.now;
+    this.scrollSprite = this.add.image(202, 300, "scroll-box").setDepth(2).setAlpha(0);
 
     setChromeActions({
-      confirm: true,
+      confirm: false,
       shuffle: false,
       zoom: false,
-      back: true,
+      back: false,
       navigate: false,
     });
 
     onConfirm(this, () => this.handleConfirm());
     bindBack(this, () => this.returnToSettings(true));
+
+    this.tweens.add({
+      targets: this.scrollSprite,
+      y: SCROLL_BASE_Y,
+      alpha: 1,
+      duration: 900,
+      ease: "Cubic.easeOut",
+      delay: SCROLL_REVEAL_DELAY_MS,
+      onComplete: () => {
+        this.canAdvance = true;
+        setChromeActions({
+          confirm: true,
+          confirmLabel: "Next",
+          shuffle: false,
+          zoom: false,
+          back: true,
+          backLabel: "Back",
+          navigate: false,
+        });
+        this.showCurrentLine();
+        this.oscillationStart = this.time.now;
+      },
+    });
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       setChromeActions({
@@ -86,26 +103,6 @@ export class HowToScene extends Phaser.Scene {
         navigate: false,
       });
     });
-  }
-
-  private setupDinah(): void {
-    this.dinahSprite = this.add.sprite(200, 120, "dinah-bg", 0).setDepth(0).setAlpha(0.9);
-
-    if (!this.anims.exists(DINAH_IDLE_ANIM_KEY)) {
-      const frameTotal = this.textures.get("dinah-bg").frameTotal;
-      this.anims.create({
-        key: DINAH_IDLE_ANIM_KEY,
-        frames: this.anims.generateFrameNumbers("dinah-bg", {
-          start: 0,
-          end: Math.min(DINAH_IDLE_FRAMES - 1, frameTotal - 1),
-        }),
-        frameRate: DINAH_IDLE_FRAME_RATE,
-        yoyo: true,
-        repeat: -1,
-      });
-    }
-
-    this.dinahSprite.play(DINAH_IDLE_ANIM_KEY);
   }
 
   private soundManager(): SoundManager {
@@ -136,9 +133,11 @@ export class HowToScene extends Phaser.Scene {
   }
 
   private returnToSettings(fromBack: boolean): void {
+    if (fromBack && !this.canAdvance) {
+      return;
+    }
     if (fromBack) {
       this.soundManager().playSfx("sfx-b-button", { volume: 0.5 });
-      this.soundManager().playSfx("sfx-cards-slow", { volume: 1 });
     } else {
       this.soundManager().playABut();
     }

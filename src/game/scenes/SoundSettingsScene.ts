@@ -87,9 +87,11 @@ export class SoundSettingsScene extends Phaser.Scene {
 
     setChromeActions({
       confirm: true,
+      confirmLabel: "Select",
       shuffle: false,
       zoom: false,
       back: true,
+      backLabel: "Back",
       navigate: true,
       start: false,
     });

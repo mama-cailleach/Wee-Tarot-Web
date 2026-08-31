@@ -47,10 +47,11 @@ export class LaunchScene extends Phaser.Scene {
       this.canStart = true;
       setChromeActions({
         confirm: true,
+        confirmLabel: "Launch",
         shuffle: false,
         zoom: false,
         back: false,
-        start: true,
+        start: false,
       });
     });
   }

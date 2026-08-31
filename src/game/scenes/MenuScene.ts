@@ -1,5 +1,10 @@
 import Phaser from "phaser";
 import { bindBack, setChromeActions } from "../systems/GameInput";
+import {
+  createDinahSprite,
+  DINAH_LEAVE_MENU_END,
+  playDinahLeave,
+} from "../systems/dinah";
 import type { SoundManager } from "../systems/SoundManager";
 import {
   addGameText,
@@ -9,17 +14,13 @@ import {
   type UiText,
 } from "../systems/phaserUtils";
 
-const DINAH_IDLE_ANIM_KEY = "dinah-idle";
-const DINAH_IDLE_FRAMES = 6;
-const DINAH_IDLE_FRAME_RATE = 8;
-
 const TEXT_BASE_Y = 182;
 const SCROLL_BASE_Y = 170;
 const OSC_AMPLITUDE = 3.7;
 const OSC_SPEED = 2.5;
 const SCROLL_REVEAL_DELAY_MS = 3200;
 
-const INTRO_LINES = [
+export const INTRO_LINES = [
   "...",
   "Welcome to my humble abode, I've been expecting you.",
   "Yes, yes... I can see... Your future is bright.",
@@ -44,6 +45,7 @@ export class MenuScene extends Phaser.Scene {
   private canAdvance = false;
   private oscillationStart?: number;
   private menuObjects: Phaser.GameObjects.GameObject[] = [];
+  private leaving = false;
 
   constructor() {
     super({ key: "MenuScene" });
@@ -56,8 +58,9 @@ export class MenuScene extends Phaser.Scene {
     this.canAdvance = false;
     this.oscillationStart = undefined;
     this.menuObjects = [];
+    this.leaving = false;
 
-    this.setupDinah();
+    this.dinahSprite = createDinahSprite(this);
 
     setChromeActions({
       confirm: false,
@@ -100,6 +103,7 @@ export class MenuScene extends Phaser.Scene {
         this.canAdvance = true;
         setChromeActions({
           confirm: true,
+          confirmLabel: "Next",
           shuffle: false,
           zoom: false,
           back: false,
@@ -109,26 +113,6 @@ export class MenuScene extends Phaser.Scene {
         this.oscillationStart = this.time.now;
       },
     });
-  }
-
-  private setupDinah(): void {
-    this.dinahSprite = this.add.sprite(200, 120, "dinah-bg", 0).setDepth(0).setAlpha(0.9);
-
-    if (!this.anims.exists(DINAH_IDLE_ANIM_KEY)) {
-      const frameTotal = this.textures.get("dinah-bg").frameTotal;
-      this.anims.create({
-        key: DINAH_IDLE_ANIM_KEY,
-        frames: this.anims.generateFrameNumbers("dinah-bg", {
-          start: 0,
-          end: Math.min(DINAH_IDLE_FRAMES - 1, frameTotal - 1),
-        }),
-        frameRate: DINAH_IDLE_FRAME_RATE,
-        yoyo: true,
-        repeat: -1,
-      });
-    }
-
-    this.dinahSprite.play(DINAH_IDLE_ANIM_KEY);
   }
 
   private soundManager(): SoundManager {
@@ -146,8 +130,7 @@ export class MenuScene extends Phaser.Scene {
 
   private handleConfirm(): void {
     if (this.mode === "menu") {
-      this.soundManager().playABut();
-      this.scene.start("OneCardGameScene");
+      this.beginReading();
       return;
     }
 
@@ -165,12 +148,39 @@ export class MenuScene extends Phaser.Scene {
   }
 
   private openSettings(): void {
-    if (this.mode !== "menu") {
+    if (this.mode !== "menu" || this.leaving) {
       return;
     }
 
     this.soundManager().playABut();
     this.scene.start("SettingsScene");
+  }
+
+  private beginReading(): void {
+    if (this.leaving) {
+      return;
+    }
+
+    this.leaving = true;
+    this.soundManager().playABut();
+    this.soundManager().playSfx("sfx-tuin", { volume: 0.5 });
+    setChromeActions({
+      confirm: false,
+      shuffle: false,
+      zoom: false,
+      back: false,
+      navigate: false,
+      start: false,
+    });
+
+    if (!this.dinahSprite) {
+      this.scene.start("OneCardGameScene");
+      return;
+    }
+
+    playDinahLeave(this, this.dinahSprite, DINAH_LEAVE_MENU_END, () => {
+      this.scene.start("OneCardGameScene");
+    });
   }
 
   private enterMenu(): void {
@@ -189,9 +199,11 @@ export class MenuScene extends Phaser.Scene {
     this.canAdvance = true;
     setChromeActions({
       confirm: true,
+      confirmLabel: "Reading",
       shuffle: false,
       zoom: false,
       back: true,
+      backLabel: "Menu",
       navigate: false,
     });
 

@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { readStoredMuted, writeStoredMuted, type SoundManager } from "./SoundManager";
 
 export const INPUT_CONFIRM = "input:confirm";
 export const INPUT_AUTO_SHUFFLE = "input:autoShuffle";
@@ -9,9 +10,13 @@ export const INPUT_DOWN = "input:down";
 
 export type ChromeActions = {
   confirm: boolean;
+  /** Label for the confirm (right) button. Defaults to ">". */
+  confirmLabel?: string;
   shuffle: boolean;
   zoom: boolean;
   back: boolean;
+  /** Label for the back (left) button. Defaults to "<". */
+  backLabel?: string;
   /** Show Up/Down chrome pair (settings-only); hides middle button. */
   navigate: boolean;
   /** Middle button labeled Start; emits confirm (Launch/Title). */
@@ -94,10 +99,28 @@ export function setChromeActions(actions: Partial<ChromeActions>): void {
 
   if (actions.confirm !== undefined && buttons.confirm) {
     buttons.confirm.disabled = !actions.confirm;
+    buttons.confirm.classList.toggle("is-hidden", !actions.confirm);
+    if (actions.confirm) {
+      const label = actions.confirmLabel ?? ">";
+      buttons.confirm.textContent = label;
+      buttons.confirm.setAttribute("aria-label", actions.confirmLabel ?? "Confirm");
+    } else {
+      buttons.confirm.textContent = ">";
+      buttons.confirm.setAttribute("aria-label", "Confirm");
+    }
   }
 
   if (actions.back !== undefined && buttons.back) {
     buttons.back.disabled = !actions.back;
+    buttons.back.classList.toggle("is-hidden", !actions.back);
+    if (actions.back) {
+      const label = actions.backLabel ?? "<";
+      buttons.back.textContent = label;
+      buttons.back.setAttribute("aria-label", actions.backLabel ?? "Back");
+    } else {
+      buttons.back.textContent = "<";
+      buttons.back.setAttribute("aria-label", "Back");
+    }
   }
 
   if (actions.navigate !== undefined) {
@@ -205,27 +228,76 @@ export function bindChromeControls(game: Phaser.Game): void {
   });
 }
 
+function syncMuteButton(button: HTMLButtonElement, muted: boolean): void {
+  button.textContent = muted ? "Unmute" : "Mute";
+  button.setAttribute("aria-pressed", muted ? "true" : "false");
+  button.setAttribute("aria-label", muted ? "Unmute" : "Mute");
+}
+
+/**
+ * Wire the HTML mute toggle above the game frame. Call once after the
+ * Phaser game is created.
+ */
+export function bindMuteToggle(game: Phaser.Game): void {
+  const button = document.getElementById("btn-mute") as HTMLButtonElement | null;
+  if (!button) {
+    return;
+  }
+
+  const initialMuted = readStoredMuted();
+  game.sound.mute = initialMuted;
+  syncMuteButton(button, initialMuted);
+
+  button.addEventListener("pointerdown", (event) => {
+    event.preventDefault();
+    const sound = game.registry.get("sound") as SoundManager | undefined;
+    if (sound) {
+      sound.setMuted(!sound.isMuted());
+      syncMuteButton(button, sound.isMuted());
+    } else {
+      const nextMuted = !game.sound.mute;
+      game.sound.mute = nextMuted;
+      writeStoredMuted(nextMuted);
+      syncMuteButton(button, nextMuted);
+    }
+  });
+}
+
 /**
  * Register a confirm handler for the active scene. Keyboard (Space/Enter),
  * canvas tap, and the HTML > button all route through the same bus event.
  * Cleaned up automatically on scene shutdown.
  */
-export function bindConfirm(scene: Phaser.Scene, handler: () => void): void {
+export type BindConfirmOptions = {
+  /** When false, canvas taps do not emit confirm (card-on-cloth screens). */
+  canvasTap?: boolean;
+};
+
+export function bindConfirm(
+  scene: Phaser.Scene,
+  handler: () => void,
+  options?: BindConfirmOptions,
+): void {
   const game = scene.game;
   const onBus = () => handler();
+  const canvasTap = options?.canvasTap !== false;
 
   game.events.on(INPUT_CONFIRM, onBus);
 
   const emit = () => emitConfirm(game);
   scene.input.keyboard?.on("keydown-SPACE", emit);
   scene.input.keyboard?.on("keydown-ENTER", emit);
-  scene.input.on(Phaser.Input.Events.POINTER_DOWN, emit);
+  if (canvasTap) {
+    scene.input.on(Phaser.Input.Events.POINTER_DOWN, emit);
+  }
 
   scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
     game.events.off(INPUT_CONFIRM, onBus);
     scene.input.keyboard?.off("keydown-SPACE", emit);
     scene.input.keyboard?.off("keydown-ENTER", emit);
-    scene.input.off(Phaser.Input.Events.POINTER_DOWN, emit);
+    if (canvasTap) {
+      scene.input.off(Phaser.Input.Events.POINTER_DOWN, emit);
+    }
   });
 }
 

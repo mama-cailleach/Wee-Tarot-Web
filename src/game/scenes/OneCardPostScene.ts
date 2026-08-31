@@ -2,6 +2,11 @@ import Phaser from "phaser";
 import { buildLines } from "../data/oneCardReadingText";
 import type { ReadingResult } from "../data/types";
 import { bindBack, setChromeActions } from "../systems/GameInput";
+import {
+  createDinahSprite,
+  DINAH_LEAVE_POST_END,
+  playDinahLeave,
+} from "../systems/dinah";
 import type { SoundManager } from "../systems/SoundManager";
 import { createWrappedText, initSceneCamera, onConfirm, type UiText } from "../systems/phaserUtils";
 
@@ -10,10 +15,6 @@ interface OneCardPostData {
 }
 
 // Matches the Playdate BaseSpreadPostScene oscillation.
-const DINAH_IDLE_ANIM_KEY = "dinah-idle";
-const DINAH_IDLE_FRAMES = 6;
-const DINAH_IDLE_FRAME_RATE = 8;
-
 const TEXT_BASE_Y = 182;
 const SCROLL_BASE_Y = 170;
 const OSC_AMPLITUDE = 3.7;
@@ -29,6 +30,7 @@ export class OneCardPostScene extends Phaser.Scene {
   private dinahSprite?: Phaser.GameObjects.Sprite;
   private canAdvance = false;
   private oscillationStart?: number;
+  private leaving = false;
 
   constructor() {
     super({ key: "OneCardPostScene" });
@@ -49,24 +51,9 @@ export class OneCardPostScene extends Phaser.Scene {
     this.lineIndex = 0;
     this.canAdvance = false;
     this.oscillationStart = undefined;
+    this.leaving = false;
 
-    this.dinahSprite = this.add.sprite(200, 120, "dinah-bg", 0).setDepth(0).setAlpha(0.9);
-
-    if (!this.anims.exists(DINAH_IDLE_ANIM_KEY)) {
-      const frameTotal = this.textures.get("dinah-bg").frameTotal;
-      this.anims.create({
-        key: DINAH_IDLE_ANIM_KEY,
-        frames: this.anims.generateFrameNumbers("dinah-bg", {
-          start: 0,
-          end: Math.min(DINAH_IDLE_FRAMES - 1, frameTotal - 1),
-        }),
-        frameRate: DINAH_IDLE_FRAME_RATE,
-        yoyo: true,
-        repeat: -1,
-      });
-    }
-
-    this.dinahSprite.play(DINAH_IDLE_ANIM_KEY);
+    this.dinahSprite = createDinahSprite(this);
 
     // One-card readings do not show a card preview (config.enableCardPreviews = false).
     this.lines = buildLines(this.reading.cardName, this.reading.inverted).lines;
@@ -107,9 +94,11 @@ export class OneCardPostScene extends Phaser.Scene {
   private refreshChrome(): void {
     setChromeActions({
       confirm: this.canAdvance,
+      confirmLabel: this.isLastLine() ? "Leave" : "Next",
       shuffle: false,
       zoom: false,
       back: this.canAdvance && this.isLastLine(),
+      backLabel: "Cloth",
     });
   }
 
@@ -147,8 +136,23 @@ export class OneCardPostScene extends Phaser.Scene {
   }
 
   private finishReading(): void {
+    if (this.leaving) {
+      return;
+    }
+
+    this.leaving = true;
     this.soundManager().playABut();
-    this.scene.start("MenuScene");
+    this.soundManager().playSfx("sfx-tuin", { volume: 0.5 });
+    setChromeActions({ confirm: false, shuffle: false, zoom: false, back: false });
+
+    if (!this.dinahSprite) {
+      this.scene.start("MenuScene");
+      return;
+    }
+
+    playDinahLeave(this, this.dinahSprite, DINAH_LEAVE_POST_END, () => {
+      this.scene.start("MenuScene");
+    });
   }
 
   update(): void {

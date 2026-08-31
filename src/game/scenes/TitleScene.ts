@@ -64,10 +64,11 @@ export class TitleScene extends Phaser.Scene {
 
     setChromeActions({
       confirm: true,
+      confirmLabel: "Start",
       shuffle: false,
       zoom: false,
       back: false,
-      start: true,
+      start: false,
     });
     onConfirm(this, () => this.begin());
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {

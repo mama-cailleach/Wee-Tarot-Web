@@ -53,12 +53,12 @@ export const CARD_DATA: CardDataMap = {
     "upright_fortune": [
       "All tools are here. Whether you know how to use them... well, that's the real trick.",
       "The stars align. You claim the credit. Classic Magician move.",
-      "As above, so below. As withinâ€¦ still loading."
+      "As above, so below. As within still loading."
     ],
     "reversed_fortune": [
       "The trick was good. Until you forgot what you were conjuring.",
       "Power misused? Or unused? Either way, something smells of ego and incense.",
-      "The illusion fails. The curtain falls. The silence isâ€¦ educational."
+      "The illusion fails. The curtain falls. The silence is educational."
     ],
     "correspondence": [
       "Air-born and ruled by Mercury, master of words and will."
@@ -539,7 +539,7 @@ export const CARD_DATA: CardDataMap = {
       "The cosmos exhales. You may now stop spiraling."
     ],
     "reversed_fortune": [
-      "You looked upâ€¦ and still managed to trip over yourself.",
+      "You looked up and still managed to trip over yourself.",
       "Wishing won't help if you keep watering weeds.",
       "The stars whispered. You answered with static."
     ],
@@ -694,7 +694,7 @@ export const CARD_DATA: CardDataMap = {
       "The spark fizzled. Now the ashes look bored."
     ],
     "correspondence": [
-      "The first breath of flameâ€¦ untamed, divine, and aching to become."
+      "The first breath of flame untamed, divine, and aching to become."
     ]
   },
   "Two of Wands": {
@@ -860,11 +860,11 @@ export const CARD_DATA: CardDataMap = {
     ],
     "reversed_fortune": [
       "Victory was late. Now it's sulking and covered in glitter glue.",
-      "Praise fades. Were you doing it for themâ€¦ or for the mirror?",
+      "Praise fades. Were you doing it for them or for the mirror?",
       "You climbed the stage, tripped on your own ego. The spirits clapped anyway."
     ],
     "correspondence": [
-      "Jupiter in Leo. Raise the torch highâ€¦ and beware the wind that follows praise."
+      "Jupiter in Leo. Raise the torch high and beware the wind that follows praise."
     ]
   },
   "Seven of Wands": {
@@ -926,7 +926,7 @@ export const CARD_DATA: CardDataMap = {
     "reversed_fortune": [
       "You threw the wand. It hit a tree. That's the omen.",
       "You tried to send a sign. The wind sent it back with edits.",
-      "Divine bufferingâ€¦ please wait. The gods are recalculating."
+      "Divine buffering please wait. The gods are recalculating."
     ],
     "correspondence": [
       "Mercury in Sagittarius. Messages in the firelight...",
@@ -987,7 +987,7 @@ export const CARD_DATA: CardDataMap = {
       "collapse"
     ],
     "upright_fortune": [
-      "Carrying too much? The universe offers a shrugâ€¦ and one more wand.",
+      "Carrying too much? The universe offers a shrug and one more wand.",
       "The load grows, but so does your weird pride in dragging it.",
       "Responsibility weighs you down. But hey, your calves look great."
     ],
@@ -1063,7 +1063,7 @@ export const CARD_DATA: CardDataMap = {
       "Reckless hearts, scorched earth. Even fire weeps when it forgets how to burn."
     ],
     "correspondence": [
-      "Fire of Fire. He rides with flame in his veins, no map, no brakes. Gloryâ€¦ or ash."
+      "Fire of Fire. He rides with flame in his veins, no map, no brakes. Glory or ash."
     ]
   },
   "Queen of Wands": {
@@ -1218,11 +1218,11 @@ export const CARD_DATA: CardDataMap = {
     ],
     "upright_fortune": [
       "Memories sweeten. Future leans: 'Can I crash the party? I brought regrets.'",
-      "Laughter braids the tides. This'll end in tearsâ€¦ later.",
+      "Laughter braids the tides. This'll end in tears later.",
       "A circle unbroken. A cosmic toast. To chaos, cheap wine, and borrowed time."
     ],
     "reversed_fortune": [
-      "Honeyed venom drips. Feast's ghost lingers. Pass the saltâ€¦ and the gossip.",
+      "Honeyed venom drips. Feast's ghost lingers. Pass the salt and the gossip.",
       "Echoes sour. The stars tap out. Your choir's off-key and overdressed.",
       "Cups tilt. The void sips again. Same vintage, still bitter."
     ],
@@ -1250,17 +1250,17 @@ export const CARD_DATA: CardDataMap = {
     ],
     "upright_fortune": [
       "Reflection? No, the cup's too busy admiring its own cracks.",
-      "The heart naps. Emotions queue politelyâ€¦ then leave a note: 'Back never.'",
+      "The heart naps. Emotions queue politely then leave a note: 'Back never.'",
       "Apathy pools. The tides file for divorce. Irreconcilable differences, I guess."
     ],
     "reversed_fortune": [
-      "The chalice tiltsâ€¦ finally spilling the tea the soul refused to sip.",
+      "The chalice tilts finally spilling the tea the soul refused to sip.",
       "The roots find water, reluctantly. Your heart grumbles and bloom.",
-      "The tide turnsâ€¦ but the shore forgets to celebrate. Again."
+      "The tide turns but the shore forgets to celebrate. Again."
     ],
     "correspondence": [
       "Moon in Cancer. Still waters grow stagnant.",
-      "The hand offers againâ€¦ but the heart is elsewhere."
+      "The hand offers again but the heart is elsewhere."
     ]
   },
   "Five of Cups": {
@@ -1601,7 +1601,7 @@ export const CARD_DATA: CardDataMap = {
       "mental fog"
     ],
     "upright_fortune": [
-      "A truth cuts through. It may stingâ€¦ but at least now you see it.",
+      "A truth cuts through. It may sting but at least now you see it.",
       "A flash of clarity! Careful, lightning rarely explains itself.",
       "The idea lands sharp. Whether it helps or hurts depends on how you hold it."
     ],
@@ -1734,7 +1734,7 @@ export const CARD_DATA: CardDataMap = {
     ],
     "reversed_fortune": [
       "You picked peace. Now you miss the drama a little.",
-      "An apology lingersâ€¦ like incense after a ritual gone wrong.",
+      "An apology lingers like incense after a ritual gone wrong.",
       "You walked away. Your pride took the long way."
     ],
     "correspondence": [
@@ -1893,13 +1893,13 @@ export const CARD_DATA: CardDataMap = {
       "The blade sings: 'Lesson learned?' You nod. Probably."
     ],
     "reversed_fortune": [
-      "The worst passed. Now what? No, seriouslyâ€¦ what now?",
+      "The worst passed. Now what? No, seriously what now?",
       "The swords slipped out. Try not to trip on them again.",
       "You got back up. No applause, just a knowing breeze."
     ],
     "correspondence": [
       "Sun in Gemini.\nThe end is here, cruel and honest.",
-      "But from ruinâ€¦ air stirs once more."
+      "But from ruin air stirs once more."
     ]
   },
   "Page of Swords": {
@@ -2021,7 +2021,7 @@ export const CARD_DATA: CardDataMap = {
       "His word is law. Especially when it involves logical deductions and cold stares."
     ],
     "reversed_fortune": [
-      "Logic without heart is justâ€¦ cold. And probably lonely.",
+      "Logic without heart is just cold. And probably lonely.",
       "Control is a cruel mistress. You're currently on a very short leash.",
       "Your brilliant ideas have become a tyrannical decree. Good for you."
     ],
@@ -2049,7 +2049,7 @@ export const CARD_DATA: CardDataMap = {
     ],
     "upright_fortune": [
       "The universe just handed you a seed. Try not to plant it in cement.",
-      "A fresh start, grounded inâ€¦ well, ground. Have fun.",
+      "A fresh start, grounded in well, ground. Have fun.",
       "A new opportunity lands. Don't trip over it."
     ],
     "reversed_fortune": [
@@ -2186,7 +2186,7 @@ export const CARD_DATA: CardDataMap = {
     ],
     "correspondence": [
       "Mercury in Taurus.\nDoors shut.\nCold bites.",
-      "But between silence and snowâ€¦ a light flickers."
+      "But between silence and snow a light flickers."
     ]
   },
   "Six of Pentacles": {
@@ -2404,9 +2404,9 @@ export const CARD_DATA: CardDataMap = {
       "The plow moves slow, but never strays. Duty is your unwavering guide."
     ],
     "reversed_fortune": [
-      "Laziness reigns. The universe finds your lack of effortâ€¦ predictable.",
+      "Laziness reigns. The universe finds your lack of effort predictable.",
       "Risk aversion, or just fear? You decide. The cosmos already has.",
-      "Boredom's dull hum. Perhaps a new path is lessâ€¦ horizontal?"
+      "Boredom's dull hum. Perhaps a new path is less horizontal?"
     ],
     "correspondence": [
       "Air of Earth. The plow moves slow, but never strays.",

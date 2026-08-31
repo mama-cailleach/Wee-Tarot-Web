@@ -81,9 +81,11 @@ export class SettingsScene extends Phaser.Scene {
 
     setChromeActions({
       confirm: true,
+      confirmLabel: "Select",
       shuffle: false,
       zoom: false,
       back: true,
+      backLabel: "Back",
       navigate: true,
     });
 
@@ -159,7 +161,7 @@ export class SettingsScene extends Phaser.Scene {
 
     switch (option.key) {
       case "how_to":
-        this.soundManager().playABut();
+        this.soundManager().playSfx("sfx-tuin", { volume: 0.5 });
         this.scene.start("HowToScene");
         return;
       case "sound":
@@ -182,7 +184,6 @@ export class SettingsScene extends Phaser.Scene {
 
   private goBack(): void {
     this.soundManager().playSfx("sfx-b-button", { volume: 0.5 });
-    this.soundManager().playSfx("sfx-cards-slow", { volume: 1 });
     this.scene.start("MenuScene");
   }
 }

@@ -3,7 +3,7 @@ import type { CardInfo } from "./types";
 
 const FALLBACK_KEYWORDS = ["mystery", "uncertain path", "hidden lesson"];
 
-const KEYWORD_INTRO_OPTIONS = [
+export const KEYWORD_INTRO_OPTIONS = [
   "The spirits whisper... ",
   "The card's pulse summons forth: ",
   "The oracles of old murmur of: ",

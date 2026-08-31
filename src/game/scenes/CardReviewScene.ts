@@ -3,7 +3,7 @@ import { getCardImageUrl } from "../config";
 import type { ReadingResult } from "../data/types";
 import { bindZoom, setChromeActions } from "../systems/GameInput";
 import type { SoundManager } from "../systems/SoundManager";
-import { initSceneCamera, onConfirm } from "../systems/phaserUtils";
+import { fitImageToGameFrame, initSceneCamera, loadTextureFromUrl, onConfirm } from "../systems/phaserUtils";
 
 interface CardReviewData {
   reading: ReadingResult;
@@ -41,7 +41,7 @@ export class CardReviewScene extends Phaser.Scene {
     this.add.image(200, 120, "placement-diamond").setDepth(2);
 
     setChromeActions({ confirm: false, shuffle: false, zoom: false, back: false });
-    onConfirm(this, () => this.leaveToMenu());
+    onConfirm(this, () => this.leaveToMenu(), { canvasTap: false });
     bindZoom(this, () => this.toggleCardZoom());
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       setChromeActions({ confirm: false, shuffle: false, zoom: false, back: false });
@@ -74,9 +74,7 @@ export class CardReviewScene extends Phaser.Scene {
     }
 
     const url = getCardImageUrl(this.reading.cardNumber, this.reading.cardSuit, zoomed);
-    this.load.image(key, url);
-    this.load.once(Phaser.Loader.Events.COMPLETE, () => onReady(key));
-    this.load.start();
+    loadTextureFromUrl(this, key, url, onReady);
   }
 
   private placeCard(textureKey: string): void {
@@ -85,12 +83,19 @@ export class CardReviewScene extends Phaser.Scene {
     }
 
     this.cardSprite = this.add.image(200, 120, textureKey).setDepth(4);
+    fitImageToGameFrame(this.cardSprite);
     if (this.reading.inverted) {
       this.cardSprite.setAngle(180);
     }
 
     this.canLeave = true;
-    setChromeActions({ confirm: true, shuffle: false, zoom: true, back: false });
+    setChromeActions({
+      confirm: true,
+      confirmLabel: "Menu",
+      shuffle: false,
+      zoom: true,
+      back: false,
+    });
   }
 
   private toggleCardZoom(): void {
@@ -103,6 +108,7 @@ export class CardReviewScene extends Phaser.Scene {
 
     const apply = (): void => {
       this.cardSprite?.setTexture(textureKey);
+      fitImageToGameFrame(this.cardSprite);
       if (this.reading?.inverted) {
         this.cardSprite?.setAngle(180);
       }
@@ -116,7 +122,13 @@ export class CardReviewScene extends Phaser.Scene {
     }
 
     this.zoomToggleBusy = true;
-    this.loadCardTexture(nextZoomed, () => apply());
+    this.loadCardTexture(nextZoomed, (key) => {
+      if (!this.textures.exists(key) || !this.cardSprite) {
+        this.zoomToggleBusy = false;
+        return;
+      }
+      apply();
+    });
   }
 
   private leaveToMenu(): void {

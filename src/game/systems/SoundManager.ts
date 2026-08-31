@@ -11,6 +11,7 @@ const BG_MUSIC_TITLE_LOOP_DURATION_SEC = 22;
 
 const STORAGE_SOUND_MODE = "weeTarot.soundMode";
 const STORAGE_SFX_ENABLED = "weeTarot.sfxEnabled";
+const STORAGE_MUTED = "weeTarot.muted";
 
 /** 1 = Music&Rain, 2 = Music, 3 = Rain */
 export type SoundMode = 1 | 2 | 3;
@@ -43,6 +44,22 @@ function readStoredSfxEnabled(): boolean {
   }
 }
 
+export function readStoredMuted(): boolean {
+  try {
+    return localStorage.getItem(STORAGE_MUTED) === "true";
+  } catch {
+    return false;
+  }
+}
+
+export function writeStoredMuted(muted: boolean): void {
+  try {
+    localStorage.setItem(STORAGE_MUTED, muted ? "true" : "false");
+  } catch {
+    // Ignore quota / private-mode failures.
+  }
+}
+
 export class SoundManager {
   private unlocked = false;
   private crankSound?: Phaser.Sound.BaseSound;
@@ -51,11 +68,14 @@ export class SoundManager {
   private bgMusicTitleLoop = false;
   private soundMode: SoundMode = 1;
   private sfxEnabled = true;
+  private muted = false;
   private ambienceVolume = DEFAULT_AMBIENCE_VOLUME;
 
   constructor(private readonly scene: Phaser.Scene) {
     this.soundMode = readStoredSoundMode();
     this.sfxEnabled = readStoredSfxEnabled();
+    this.muted = readStoredMuted();
+    this.applyMute();
   }
 
   unlock(): void {
@@ -67,6 +87,7 @@ export class SoundManager {
       this.scene.sound.unlock();
     }
     this.unlocked = true;
+    this.applyMute();
     this.startBgMusic(this.bgMusicTitleLoop);
     this.applySoundMode();
   }
@@ -135,7 +156,7 @@ export class SoundManager {
   }
 
   playSfx(key: string, config?: Phaser.Types.Sound.SoundConfig): void {
-    if (!this.unlocked || !this.sfxEnabled) {
+    if (!this.unlocked || !this.sfxEnabled || this.muted) {
       return;
     }
     if (this.scene.cache.audio.exists(key)) {
@@ -145,7 +166,7 @@ export class SoundManager {
 
   /** Random A-button click among a_but1–a_but10 (Playdate Sound.playABut). */
   playABut(): void {
-    if (!this.unlocked || !this.sfxEnabled) {
+    if (!this.unlocked || !this.sfxEnabled || this.muted) {
       return;
     }
     const variant = Math.floor(Math.random() * A_BUT_VARIANT_COUNT) + 1;
@@ -184,6 +205,20 @@ export class SoundManager {
     return this.sfxEnabled;
   }
 
+  isMuted(): boolean {
+    return this.muted;
+  }
+
+  setMuted(muted: boolean): boolean {
+    this.muted = muted;
+    writeStoredMuted(muted);
+    this.applyMute();
+    if (!this.muted && this.unlocked) {
+      this.applySoundMode();
+    }
+    return this.muted;
+  }
+
   setAmbienceVolume(volume: number): void {
     this.ambienceVolume = Math.max(0, Math.min(1, volume));
     if (this.rain) {
@@ -192,8 +227,10 @@ export class SoundManager {
   }
 
   playAmbience(): boolean {
-    if (!this.unlocked || this.soundMode === 2) {
-      this.stopAmbience();
+    if (!this.unlocked || this.soundMode === 2 || this.muted) {
+      if (this.soundMode === 2) {
+        this.stopAmbience();
+      }
       return false;
     }
     if (!this.scene.cache.audio.exists(RAIN_KEY)) {
@@ -241,15 +278,28 @@ export class SoundManager {
     }
   }
 
+  private applyMute(): void {
+    this.scene.sound.mute = this.muted;
+  }
+
   startCrankLoop(): void {
-    if (!this.unlocked || !this.sfxEnabled || !this.scene.cache.audio.exists("sfx-crank")) {
+    if (
+      !this.unlocked ||
+      !this.sfxEnabled ||
+      this.muted ||
+      !this.scene.cache.audio.exists("sfx-crank")
+    ) {
       return;
     }
 
-    if (!this.crankSound || !this.crankSound.isPlaying) {
-      this.crankSound = this.scene.sound.add("sfx-crank", { loop: true, volume: 0.65 });
-      this.crankSound.play();
+    if (!this.crankSound) {
+      this.crankSound = this.scene.sound.add("sfx-crank", { loop: false, volume: 0.65 });
     }
+
+    if (this.crankSound.isPlaying) {
+      this.crankSound.stop();
+    }
+    this.crankSound.play();
   }
 
   stopCrankLoop(): void {

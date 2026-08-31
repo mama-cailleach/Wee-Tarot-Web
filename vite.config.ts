@@ -21,4 +21,12 @@ export default defineConfig({
   server: {
     port: 5173,
   },
+  build: {
+    rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, "index.html"),
+        debugText: path.resolve(__dirname, "debug-text.html"),
+      },
+    },
+  },
 });

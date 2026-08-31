@@ -1,5 +1,5 @@
 import { createGame } from "./game/Game";
-import { bindChromeControls } from "./game/systems/GameInput";
+import { bindChromeControls, bindMuteToggle } from "./game/systems/GameInput";
 
 const parent = document.getElementById("game");
 if (!parent) {
@@ -8,3 +8,4 @@ if (!parent) {
 
 const game = createGame(parent);
 bindChromeControls(game);
+bindMuteToggle(game);

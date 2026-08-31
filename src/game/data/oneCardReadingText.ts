@@ -1,7 +1,7 @@
 import { CARD_DATA } from "./cardData";
 import { pickKeywordIntroLine, pickKeywords } from "./spreadReadingData";
 
-const INTRO_OPTIONS = [
+export const INTRO_OPTIONS = [
   "Hmmmm... Hmmmm...\n(squints at the card)\nVery interesting…",
   "(looks at you with a raised eyebrow)",
   "Shh... listen closely.\nNo, closer.",
@@ -12,14 +12,13 @@ const INTRO_OPTIONS = [
   "Ah, this one… I remember its dance with fate.",
 ];
 
-const LAST_LINE_OPTIONS = [
-  "You can press *>* or *<* now darling, but I will not tell you what to do.",
-  "*<* will show you what was. *>* moves you forward. Ghosts hate being summoned twice.",
-  "Take a final peek with *<* \nOr press *>* and let fate close the door.",
-  "One more look with *<*? To move on? *>* knows the way. The card will not follow.",
-  "If your heart clings, press *<* If it dares, *>* The card forgets you soon.",
-  "Press *<* for one last look. Press *>* to move on. The past doesn't wait, dearie.",
-  "One last glance? Press *<* Ready to let go? Press *>* The veil doesn't open twice.",
+export const LAST_LINE_OPTIONS = [
+  "You can press *Leave* or *Cloth* now darling, but I will not tell you what to do.",
+  "A final peek with *Cloth*, or *Leave* and let fate close the door.",
+  "Last look at the *Cloth*? If not *Leave* knows the way. The card will not follow.",
+  "If your heart clings, *Cloth*. If it dares, *Leave*. The card forgets you soon.",
+  "*Cloth* for one last look. *Leave* to move on. The past doesn't wait, dearie.",
+  "One last glance? *Cloth*. Ready to let go? *Leave*. The veil doesn't open twice.",
 ];
 
 export function buildLines(
