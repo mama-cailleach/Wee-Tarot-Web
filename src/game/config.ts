@@ -3,7 +3,7 @@ export const GAME_HEIGHT = 240;
 
 export const SCENE_FADE_MS = 1000;
 
-export const ASSET_BASE = "/assets";
+export const ASSET_BASE = `${import.meta.env.BASE_URL}assets`;
 
 export function assetUrl(...parts: string[]): string {
   return `${ASSET_BASE}/${parts.join("/")}`;

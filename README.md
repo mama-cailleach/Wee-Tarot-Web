@@ -2,6 +2,8 @@
 
 Web port of [Wee Tarot](https://mama666.itch.io/wee-tarot). This repo is separate from the Playdate version.
 
+**Play in browser:** [https://mama-cailleach.github.io/Wee-Tarot-Web/](https://mama-cailleach.github.io/Wee-Tarot-Web/)
+
 **Canonical Playdate repo:** `C:\Games\Playdate\mama Games\Wee Tarot`
 
 ## Layout
