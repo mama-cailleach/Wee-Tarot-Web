@@ -14,7 +14,7 @@ Web port of [Wee Tarot](https://mama666.itch.io/wee-tarot). This repo is separat
 | `content/` | Card copy, spread text (Lua source for export) |
 | `src/` | Phaser 3 + TypeScript web game |
 | `reference/playdate/` | Read-only Playdate Lua for architecture reference |
-| `docs/` | Porting notes, flow maps |
+| `docs/` | Porting notes, flow maps, [GitHub Pages hosting](docs/github-pages.md) |
 
 See [MIGRATION.md](MIGRATION.md) for the full copy manifest.
 
@@ -40,6 +40,8 @@ Title → one-card shuffle (spin or auto) → draw → Dinah reading → back to
 npm run build
 npm run preview
 ```
+
+Push to `master` publishes the live site automatically. Details: [docs/github-pages.md](docs/github-pages.md).
 
 ## Tests
 

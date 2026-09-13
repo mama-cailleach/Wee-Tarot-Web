@@ -1,5 +1,7 @@
 # Wee Tarot — Agent Guide
 
+This file lives in the **Wee Tarot Web** repo. It is Playdate-port reference (copied from the original game). For this repo’s live web build, hosting, and ship loop, read **[github-pages.md](github-pages.md)** before changing Vite `base`, `ASSET_BASE`, `npm run build`, or `.github/workflows/`.
+
 Playdate tarot game (Lua + Playdate SDK). **v1 shipped** on [itch.io](https://mama666.itch.io/wee-tarot); this repo is a **larger update**: multiple spreads, diary, deck filters. Structure is largely in place; active work is **device performance**, copy polish, and refinement.
 
 **Detailed patterns:** [.cursor/rules/wee-tarot.mdc](.cursor/rules/wee-tarot.mdc)  
@@ -131,5 +133,5 @@ Success = no obvious audio hiccup on reveal entry; no standout frame drop on dev
 
 ## Out of scope unless requested
 
-- Web/mobile port (`porting.md`)
+- Web/mobile port (`porting.md`) — except GitHub Pages path/deploy work, which is in-repo and documented in [github-pages.md](github-pages.md)
 - Replacing `.github/copilot-instructions.md` wholesale (cross-linked only)
