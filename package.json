@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run export:data && tsc --noEmit && vite build",
+    "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "build:font": "tsx scripts/build-tarotheque-font.ts",
     "repack:sheets": "tsx scripts/repack-spritesheets.ts",
